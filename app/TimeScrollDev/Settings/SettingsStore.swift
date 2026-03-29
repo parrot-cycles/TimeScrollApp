@@ -6,7 +6,7 @@ final class SettingsStore: ObservableObject {
     nonisolated static let defaultTextProcessingMode: TextProcessingMode = .ocr
     nonisolated static let defaultOCRMode: OCRMode = .fast
     nonisolated static let defaultCaptureMinInterval: Double = 5.0
-    nonisolated static let defaultRetentionDays: Int = 30
+    nonisolated static let defaultRetentionDays: Int = 999999
     nonisolated static let defaultStorageFormat: StorageFormat = .heic
     nonisolated static let defaultMaxLongEdge: Int = 1600
     nonisolated static let defaultLossyQuality: Double = 0.6
@@ -59,7 +59,7 @@ final class SettingsStore: ObservableObject {
     // Storage location (display only; bookmark lives in UserDefaults for background use)
     @Published var storageFolderPath: String = StoragePaths.displayPath() { didSet { if !isLoading { save() } } }
     // Backup (external) storage option and display path
-    @Published var backupEnabled: Bool = false { didSet { if !isLoading { save() } } }
+    @Published var backupEnabled: Bool = true { didSet { if !isLoading { save() } } }
     @Published var backupFolderPath: String = StoragePaths.backupDisplayPath() { didSet { if !isLoading { save() } } }
     // Energy: keep captureScale
     @Published var captureScale: Double = SettingsStore.defaultCaptureScale { didSet { if !isLoading { save() } } }  // 0.5...1.0

@@ -121,6 +121,41 @@ extension DB {
         let thumbPath: String?
     }
 
+    /// Returns the set of day-of-month values (1-31) that have at least one snapshot
+    /// within the given month (specified by year and month).
+    func daysWithSnapshots(year: Int, month: Int) throws -> Set<Int> {
+        try onQueueSync {
+            try openIfNeeded()
+            guard let db = db else { return [] }
+
+            var cal = Calendar.current
+            cal.timeZone = .current
+            guard let startOfMonth = cal.date(from: DateComponents(year: year, month: month, day: 1)),
+                  let endOfMonth = cal.date(byAdding: .month, value: 1, to: startOfMonth) else { return [] }
+
+            let startMs = Int64(startOfMonth.timeIntervalSince1970 * 1000)
+            let endMs = Int64(endOfMonth.timeIntervalSince1970 * 1000)
+
+            var stmt: OpaquePointer?
+            defer { sqlite3_finalize(stmt) }
+            // Get all started_at_ms in this month range and extract days in Swift
+            // (avoids SQLite date functions which may not handle timezones correctly)
+            let sql = "SELECT DISTINCT started_at_ms FROM ts_snapshot WHERE started_at_ms >= ? AND started_at_ms < ? ORDER BY started_at_ms;"
+            guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return [] }
+            sqlite3_bind_int64(stmt, 1, startMs)
+            sqlite3_bind_int64(stmt, 2, endMs)
+
+            var days: Set<Int> = []
+            while sqlite3_step(stmt) == SQLITE_ROW {
+                let ms = sqlite3_column_int64(stmt, 0)
+                let date = Date(timeIntervalSince1970: TimeInterval(ms) / 1000.0)
+                let day = cal.component(.day, from: date)
+                days.insert(day)
+            }
+            return days
+        }
+    }
+
     func listSnapshots(limit: Int = 50) throws -> [SnapshotRow] {
         try onQueueSync {
         try openIfNeeded()

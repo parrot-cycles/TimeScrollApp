@@ -16,6 +16,9 @@ struct TimelineUnifiedView: View {
     @State private var keyMonitor: Any? = nil
     @State private var showingResults: Bool = false
     @State private var preserveOpenedResultContextOnRefresh: Bool = false
+    @State private var showCalendar: Bool = false
+    @State private var calendarDate: Date = Date()
+    @State private var calendarDaysWithContent: Set<Int> = []
 
     private let minMsPerPt: Double = 100             // 100ms per pt at max zoom-in
     private let maxMsPerPt: Double = 300_000         // 5m per pt at max zoom-out (keeps things "pretty small")
@@ -298,20 +301,151 @@ struct TimelineUnifiedView: View {
     }
 
     private var bottomTimeline: some View {
-        ZStack(alignment: .bottomTrailing) {
-            TimelineBarContainer(model: model,
-                                 isCompressed: compressedTimeline,
-                                 invertScrollDirection: invertTimelineScrollDirection,
-                                 onJump: { t in model.jump(to: t) },
-                                 onHover: { t in model.hoverTimeMs = t },
-                                 onHoverExit: { model.hoverTimeMs = nil })
-                .frame(height: 100)
+        VStack(spacing: 0) {
+            calendarBar
+            Divider()
+            ZStack(alignment: .bottomTrailing) {
+                TimelineBarContainer(model: model,
+                                     isCompressed: compressedTimeline,
+                                     invertScrollDirection: invertTimelineScrollDirection,
+                                     onJump: { t in model.jump(to: t) },
+                                     onHover: { t in model.hoverTimeMs = t },
+                                     onHoverExit: { model.hoverTimeMs = nil })
+                    .frame(height: 100)
 
-            Button(action: { jumpToEnd() }) {
-                Image(systemName: "chevron.right.to.line")
+                Button(action: { jumpToEnd() }) {
+                    Image(systemName: "chevron.right.to.line")
+                }
+                .buttonStyle(.plain)
+                .padding(8)
             }
-            .buttonStyle(.plain)
-            .padding(8)
+        }
+    }
+
+    private var calendarBar: some View {
+        HStack(spacing: 6) {
+            Spacer()
+
+            // Previous day
+            Button { jumpCalendarDay(by: -1) } label: {
+                Image(systemName: "chevron.backward.2")
+                    .font(.body.weight(.semibold))
+                    .frame(width: 32, height: 28)
+            }
+            .buttonStyle(.bordered)
+            .help("Previous day")
+
+            // Previous snapshot
+            Button { model.prev() } label: {
+                Image(systemName: "chevron.left")
+                    .font(.body.weight(.semibold))
+                    .frame(width: 32, height: 28)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!(model.selectedIndex + 1 < model.metas.count))
+
+            // Date button → calendar popover
+            Button {
+                if let sel = model.selected {
+                    calendarDate = Date(timeIntervalSince1970: TimeInterval(sel.startedAtMs) / 1000)
+                }
+                loadCalendarDays()
+                showCalendar.toggle()
+            } label: {
+                Text(selectedSnapshotDateString)
+                    .font(.system(.body, design: .rounded).weight(.medium))
+                    .padding(.horizontal, 8)
+                    .frame(height: 28)
+            }
+            .buttonStyle(.bordered)
+            .popover(isPresented: $showCalendar, arrowEdge: .top) {
+                CalendarPickerView(
+                    selectedDate: $calendarDate,
+                    daysWithContent: calendarDaysWithContent,
+                    onSelectDay: { date in
+                        jumpToDate(date)
+                        showCalendar = false
+                    }
+                )
+                .frame(width: 300)
+                .onChange(of: calendarDate) { _ in
+                    loadCalendarDays()
+                }
+            }
+
+            // Next snapshot
+            Button { model.next() } label: {
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.semibold))
+                    .frame(width: 32, height: 28)
+            }
+            .buttonStyle(.bordered)
+            .disabled(!(model.selectedIndex - 1 >= 0))
+
+            // Next day
+            Button { jumpCalendarDay(by: 1) } label: {
+                Image(systemName: "chevron.forward.2")
+                    .font(.body.weight(.semibold))
+                    .frame(width: 32, height: 28)
+            }
+            .buttonStyle(.bordered)
+            .help("Next day")
+
+            Spacer()
+        }
+        .padding(.vertical, 6)
+        .onAppear { syncCalendarToSelection() }
+        .onChange(of: model.selected?.id) { _ in syncCalendarToSelection() }
+    }
+
+    private var calendarDateString: String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "d. MMMM yyyy"
+        return fmt.string(from: calendarDate)
+    }
+
+    private var selectedSnapshotDateString: String {
+        guard let sel = model.selected else { return calendarDateString }
+        let date = Date(timeIntervalSince1970: TimeInterval(sel.startedAtMs) / 1000)
+        let fmt = DateFormatter()
+        fmt.dateStyle = .medium
+        fmt.timeStyle = .medium
+        return fmt.string(from: date)
+    }
+
+    private func syncCalendarToSelection() {
+        if let sel = model.selected {
+            calendarDate = Date(timeIntervalSince1970: TimeInterval(sel.startedAtMs) / 1000)
+        }
+    }
+
+    private func jumpCalendarDay(by offset: Int) {
+        if let newDate = Calendar.current.date(byAdding: .day, value: offset, to: calendarDate) {
+            calendarDate = newDate
+            jumpToDate(newDate)
+        }
+    }
+
+    private func jumpToDate(_ date: Date) {
+        let cal = Calendar.current
+        let startOfDay = cal.startOfDay(for: date)
+        let endOfDay = cal.date(byAdding: .day, value: 1, to: startOfDay)!
+        startDate = startOfDay
+        endDate = endOfDay
+        applyFilters()
+        model.load()
+        showingResults = false
+    }
+
+    private func loadCalendarDays() {
+        let cal = Calendar.current
+        let year = cal.component(.year, from: calendarDate)
+        let month = cal.component(.month, from: calendarDate)
+        DispatchQueue.global(qos: .userInitiated).async {
+            let days = (try? DB.shared.daysWithSnapshots(year: year, month: month)) ?? []
+            DispatchQueue.main.async {
+                calendarDaysWithContent = days
+            }
         }
     }
 

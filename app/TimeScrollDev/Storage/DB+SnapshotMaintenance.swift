@@ -39,7 +39,7 @@ extension DB {
             for p in pathsToHandle {
                 let srcURL = URL(fileURLWithPath: p)
                 let archived = StoragePaths.archiveSnapshotToBackupIfEnabled(srcURL)
-                if !archived { _ = try? fm.removeItem(at: srcURL) }
+                if !archived { _ = try? fm.trashItem(at: srcURL, resultingItemURL: nil) }
             }
 
             // Delete from FTS and primary tables by cutoff
@@ -76,7 +76,7 @@ extension DB {
                 for p in pathsToHandle {
                     let srcURL = URL(fileURLWithPath: p)
                     let archived = StoragePaths.archiveSnapshotToBackupIfEnabled(srcURL)
-                    if !archived { _ = try? fm.removeItem(at: srcURL) }
+                    if !archived { _ = try? fm.trashItem(at: srcURL, resultingItemURL: nil) }
                 }
             }
             let sql = """
@@ -109,10 +109,10 @@ extension DB {
                 }
             }
 
-            // Best-effort file deletions
+            // Move files to Trash instead of permanent deletion
             let fm = FileManager.default
-            if let p = pathToDelete { _ = try? fm.removeItem(atPath: p) }
-            if let t = thumbToDelete { _ = try? fm.removeItem(atPath: t) }
+            if let p = pathToDelete { _ = try? fm.trashItem(at: URL(fileURLWithPath: p), resultingItemURL: nil) }
+            if let t = thumbToDelete { _ = try? fm.trashItem(at: URL(fileURLWithPath: t), resultingItemURL: nil) }
 
             // Delete associated text and boxes, then primary row
             _ = sqlite3_exec(db, "DELETE FROM ts_text WHERE rowid=\(id);", nil, nil, nil)

@@ -153,8 +153,41 @@ struct ImportPane: View {
                     importer.state = .idle
                 }
             }
+
+            SettingsSectionCard(title: "Re-index snapshots on disk",
+                                subtitle: "Scan the Snapshots folder and create database entries for any files not already indexed. Use this after restoring files from backup.") {
+                HStack {
+                    Button(isRebuilding ? "Rebuilding..." : "Rebuild from disk") {
+                        isRebuilding = true
+                        rebuildProgress = "Scanning..."
+                        Task.detached(priority: .userInitiated) {
+                            Indexer.shared.rebuildFTSFromFiles()
+                            await MainActor.run {
+                                isRebuilding = false
+                                rebuildProgress = "Done"
+                                AppState.shared.lastSnapshotTick &+= 1
+                            }
+                        }
+                    }
+                    .disabled(isRebuilding)
+
+                    if isRebuilding {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+
+                    if !rebuildProgress.isEmpty && !isRebuilding {
+                        Text(rebuildProgress)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
         }
     }
+
+    @State private var isRebuilding = false
+    @State private var rebuildProgress = ""
 
     private func chooseFolder() {
         let panel = NSOpenPanel()

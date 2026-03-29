@@ -45,11 +45,7 @@ struct SnapshotStageView: View {
                 Text("No snapshots").foregroundColor(.secondary)
             }
 
-            // Center overlay with prev/time/next
-            if model.selected != nil {
-                CenterOverlay(model: model, nsImage: nsImage)
-                    .allowsHitTesting(true)
-            }
+            // Navigation overlay removed — replaced by bottom navigation bar in TimelineUnifiedView
 
             // Actions menu (top-right)
             ActionsPanel(model: model,
