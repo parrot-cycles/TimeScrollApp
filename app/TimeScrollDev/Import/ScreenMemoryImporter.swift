@@ -39,6 +39,10 @@ final class ScreenMemoryImporter: ObservableObject {
         start(folder: folder, mode: .copy, testOnly: true, includeOrphans: false)
     }
 
+    @MainActor func startFullCopy(folder: URL) {
+        start(folder: folder, mode: .copy, testOnly: false, includeOrphans: false)
+    }
+
     @MainActor func startFull(folder: URL) {
         start(folder: folder, mode: .move, testOnly: false, includeOrphans: false)
     }

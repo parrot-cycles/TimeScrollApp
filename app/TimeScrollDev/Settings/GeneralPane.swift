@@ -193,9 +193,10 @@ struct GeneralPane: View {
         return formatter
     }()
 
-    private static let minIntervalOptions: [Double] = [
-        0.5, 0.7, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0, 15.0, 20.0, 30.0
-    ]
+    private static let minIntervalOptions: [Double] = {
+        // 1s to 120s in 1s steps
+        (1...120).map { Double($0) }
+    }()
 
     private static func indexForInterval(_ value: Double) -> Int {
         var bestIndex = 0

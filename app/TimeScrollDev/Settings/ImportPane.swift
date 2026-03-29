@@ -86,14 +86,20 @@ struct ImportPane: View {
 
     private var actionButtons: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Test import copies 5 screenshots spread across your full history. Full import moves all files to save disk space.")
+            Text("Test copies 5 samples. Copy keeps originals (for external drives). Move saves space.")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
             HStack(spacing: 12) {
-                Button("Test Import (5 screenshots)") {
+                Button("Test (5)") {
                     guard let url = folderURL else { return }
                     importer.startTest(folder: url)
+                }
+                .disabled(!isValidFolder)
+
+                Button("Import All (Copy)") {
+                    guard let url = folderURL else { return }
+                    importer.startFullCopy(folder: url)
                 }
                 .disabled(!isValidFolder)
 
@@ -102,7 +108,6 @@ struct ImportPane: View {
                     importer.startFull(folder: url)
                 }
                 .disabled(!isValidFolder)
-
             }
         }
     }
