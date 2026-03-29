@@ -32,3 +32,4 @@ release/*.dmg
 
 # Claude Code
 .claude/
+CLAUDE.md
