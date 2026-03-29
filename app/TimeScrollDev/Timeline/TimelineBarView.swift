@@ -368,14 +368,14 @@ final class TimelineBarNSView: NSView {
         NSColor.windowBackgroundColor.setFill()
         dirtyRect.fill()
 
-        drawTicks(model: m, in: bounds)
         drawSegments(model: m, in: bounds)
         drawSelection(model: m, in: bounds)
+        drawTicks(model: m, in: bounds)
     }
 
     private func drawSegments(model m: TimelineModel, in rect: NSRect) {
-        let h: CGFloat = 20
-        let y: CGFloat = rect.midY - h/2 + 8
+        let h: CGFloat = 24
+        let y: CGFloat = rect.minY + 4
         for seg in m.segments {
             let x0 = timelineX(for: seg.startMs)
             let x1 = timelineX(for: seg.endMs)
@@ -452,9 +452,9 @@ final class TimelineBarNSView: NSView {
             .font: NSFont.systemFont(ofSize: 10, weight: .regular),
             .foregroundColor: NSColor.secondaryLabelColor
         ]
-        let yTop = rect.minY + 8
-        let tickHeightMajor: CGFloat = 8
-        let tickHeightMinor: CGFloat = 4
+        let yBottom = rect.maxY - 22
+        let tickHeightMajor: CGFloat = 6
+        let tickHeightMinor: CGFloat = 3
         // First major aligned to step
         if end <= start { return }
         let firstMajor = ((start / majorStep) + 1) * majorStep
@@ -465,15 +465,15 @@ final class TimelineBarNSView: NSView {
             // Major tick
             NSColor.separatorColor.setStroke()
             let p = NSBezierPath()
-            p.move(to: NSPoint(x: xPos, y: yTop))
-            p.line(to: NSPoint(x: xPos, y: yTop + tickHeightMajor))
+            p.move(to: NSPoint(x: xPos, y: yBottom))
+            p.line(to: NSPoint(x: xPos, y: yBottom + tickHeightMajor))
             p.lineWidth = 1
             p.stroke()
             // Label
             let date = Date(timeIntervalSince1970: TimeInterval(t)/1000)
             let str = df.string(from: date) as NSString
             let size = str.size(withAttributes: labelStyle)
-            str.draw(at: NSPoint(x: xPos - size.width/2, y: yTop + tickHeightMajor + 2), withAttributes: labelStyle)
+            str.draw(at: NSPoint(x: xPos - size.width/2, y: yBottom + tickHeightMajor + 1), withAttributes: labelStyle)
             // Minor ticks between this and next major
             var mt = t + minorStep
             let nextMajor = t + majorStep
@@ -481,8 +481,8 @@ final class TimelineBarNSView: NSView {
                 let mx = timelineX(for: mt)
                 NSColor.separatorColor.withAlphaComponent(0.5).setStroke()
                 let mp = NSBezierPath()
-                mp.move(to: NSPoint(x: mx, y: yTop))
-                mp.line(to: NSPoint(x: mx, y: yTop + tickHeightMinor))
+                mp.move(to: NSPoint(x: mx, y: yBottom))
+                mp.line(to: NSPoint(x: mx, y: yBottom + tickHeightMinor))
                 mp.lineWidth = 1
                 mp.stroke()
                 mt += minorStep
@@ -499,9 +499,9 @@ final class TimelineBarNSView: NSView {
             .font: NSFont.systemFont(ofSize: 10, weight: .regular),
             .foregroundColor: NSColor.secondaryLabelColor
         ]
-        let yTop = rect.minY + 8
-        let majorTickHeight: CGFloat = 8
-        let minorTickHeight: CGFloat = 4
+        let yTop = rect.maxY - 22
+        let majorTickHeight: CGFloat = 6
+        let minorTickHeight: CGFloat = 3
         let df = TimelineBarNSView.timeFormatter
         var lastMajorX = -CGFloat.greatestFiniteMagnitude
         var lastMinorX = -CGFloat.greatestFiniteMagnitude
@@ -532,8 +532,7 @@ final class TimelineBarNSView: NSView {
 
     private static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateStyle = .short
-        f.timeStyle = .short
+        f.dateFormat = "HH:mm"
         return f
     }()
 
