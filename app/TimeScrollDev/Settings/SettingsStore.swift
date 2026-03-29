@@ -27,7 +27,7 @@ final class SettingsStore: ObservableObject {
     enum OCRMode: String, CaseIterable, Identifiable { case fast, accurate; var id: String { rawValue } }
     enum Fuzziness: String, CaseIterable, Identifiable { case off, low, medium, high; var id: String { rawValue } }
     enum StorageFormat: String, CaseIterable, Identifiable { case hevc, heic, jpeg, png; var id: String { rawValue } }
-    enum DisplayCaptureMode: String, CaseIterable, Identifiable { case first, all; var id: String { rawValue } }
+    enum DisplayCaptureMode: String, CaseIterable, Identifiable { case active, builtIn, first, all; var id: String { rawValue } }
 
     enum TextProcessingMode: String, CaseIterable, Identifiable {
         case ocr, accessibility, none
@@ -64,7 +64,7 @@ final class SettingsStore: ObservableObject {
     // Energy: keep captureScale
     @Published var captureScale: Double = SettingsStore.defaultCaptureScale { didSet { if !isLoading { save() } } }  // 0.5...1.0
     // Displays: capture first or all
-    @Published var captureDisplayMode: DisplayCaptureMode = .first { didSet { if !isLoading { save() } } }
+    @Published var captureDisplayMode: DisplayCaptureMode = .active { didSet { if !isLoading { save() } } }
 
     // App behavior
     @Published var startMinimized: Bool = false { didSet { if !isLoading { save() } } }

@@ -1,6 +1,7 @@
 import Foundation
 import ScreenCaptureKit
 import CoreMedia
+import AppKit
 
 final class CaptureManager: NSObject {
     private var streams: [SCStream] = []
@@ -22,9 +23,33 @@ final class CaptureManager: NSObject {
 
         // Determine which displays to capture based on settings (background-safe via UserDefaults)
         let d = UserDefaults.standard
-        let modeRaw = d.string(forKey: "settings.captureDisplayMode") ?? "first"
-        let captureAll = (modeRaw == "all")
-        let displays: [SCDisplay] = captureAll ? content.displays : (content.displays.first.map { [$0] } ?? [])
+        let modeRaw = d.string(forKey: "settings.captureDisplayMode") ?? "active"
+        let displays: [SCDisplay]
+        switch modeRaw {
+        case "all":
+            displays = content.displays
+        case "builtIn":
+            // Built-in display: the one with the smallest displayID (typically the laptop screen)
+            // CGMainDisplayID() returns primary, but built-in is identified by having no external connection
+            if let builtIn = content.displays.first(where: { CGDisplayIsBuiltin(CGDirectDisplayID($0.displayID)) != 0 }) {
+                displays = [builtIn]
+            } else {
+                displays = content.displays.first.map { [$0] } ?? []
+            }
+        case "active":
+            // Active display: the one containing the focused window
+            if let frontApp = NSWorkspace.shared.frontmostApplication,
+               let scApp = content.applications.first(where: { $0.bundleIdentifier == frontApp.bundleIdentifier }),
+               let focusedWindow = content.windows.first(where: { $0.owningApplication?.bundleIdentifier == scApp.bundleIdentifier }),
+               let activeDisplay = content.displays.first(where: { displayContains(display: $0, window: focusedWindow) }) {
+                displays = [activeDisplay]
+            } else {
+                // Fallback to primary display
+                displays = content.displays.first.map { [$0] } ?? []
+            }
+        default: // "first"
+            displays = content.displays.first.map { [$0] } ?? []
+        }
         guard !displays.isEmpty else { throw NSError(domain: "TS", code: -2) }
         let baseCaptureInterval = {
             let value = d.double(forKey: "settings.captureMinInterval")
@@ -142,6 +167,16 @@ final class CaptureManager: NSObject {
 
     private func filterFor(display: SCDisplay, apps: [SCRunningApplication]) -> SCContentFilter {
         SCContentFilter(display: display, excludingApplications: apps, exceptingWindows: [])
+    }
+
+    /// Check if a display's frame contains the window's frame.
+    private func displayContains(display: SCDisplay, window: SCWindow) -> Bool {
+        let dFrame = CGRect(x: 0, y: 0, width: display.width, height: display.height)
+        let wFrame = window.frame
+        // Window's origin is in global coordinates; check if it overlaps with display bounds
+        // Display frame in global coords uses displayID
+        let displayBounds = CGDisplayBounds(CGDirectDisplayID(display.displayID))
+        return displayBounds.contains(CGPoint(x: wFrame.midX, y: wFrame.midY))
     }
 
     @MainActor
