@@ -19,18 +19,15 @@ final class SearchService {
                 return max(3, min(n, Int(ceil(Double(n) * 0.60))))
             }
         }
-        var parts: [String] = []
-        for part in parsed.parts {
+
+        func tokenToFTS(_ part: ParsedSearchQuery.Part) -> String {
             if part.isPhrase {
-                // exact phrase: wrap in quotes, no fuzziness or expansion
                 let escaped = part.text.lowercased().replacingOccurrences(of: "\"", with: " ")
-                parts.append("\"\(escaped)\"")
-                continue
+                return "\"\(escaped)\""
             }
             let token = part.text.lowercased()
-            if token.isEmpty { continue }
+            guard !token.isEmpty else { return token }
 
-            // Expand with OCR confusion variants if enabled
             let variants: [String]
             if intelligentAccuracy {
                 variants = OCRConfusion.expand(token)
@@ -38,7 +35,6 @@ final class SearchService {
                 variants = [token]
             }
 
-            // Apply fuzziness (prefix) per-variant when applicable
             let n = token.count
             let usePrefix = !(n <= 2 || fuzziness == .off || (fuzziness == .low && n <= 5))
             if usePrefix {
@@ -47,13 +43,48 @@ final class SearchService {
                     let pref = String(v.prefix(min(p, v.count)))
                     return "\(pref)*"
                 }
-                // Join OR without parentheses; SQL layer will AND multiple MATCH clauses
-                parts.append(expanded.joined(separator: " OR "))
+                return expanded.count == 1 ? expanded[0] : "(\(expanded.joined(separator: " OR ")))"
             } else {
-                parts.append(variants.joined(separator: " OR "))
+                return variants.count == 1 ? variants[0] : "(\(variants.joined(separator: " OR ")))"
             }
         }
-        return parts
+
+        // Build a single FTS5 expression respecting AND/OR/NOT operators.
+        // Group consecutive AND parts together; OR creates alternatives;
+        // NOT prefixes with FTS5 NOT.
+        //
+        // Strategy: build one combined FTS5 expression string when OR/NOT are used,
+        // otherwise fall back to multiple MATCH clauses (original behavior, better performance).
+        let hasOrOrNot = parsed.parts.contains { $0.op == .or || $0.op == .not }
+
+        if !hasOrOrNot {
+            // Simple case: all AND — each part is a separate MATCH clause (original behavior)
+            return parsed.parts.compactMap { part in
+                let fts = tokenToFTS(part)
+                return fts.isEmpty ? nil : fts
+            }
+        }
+
+        // Complex case: build single FTS5 expression with AND/OR/NOT
+        var expr = ""
+        for (i, part) in parsed.parts.enumerated() {
+            let fts = tokenToFTS(part)
+            guard !fts.isEmpty else { continue }
+
+            if i > 0 && !expr.isEmpty {
+                switch part.op {
+                case .and: expr += " AND "
+                case .or: expr += " OR "
+                case .not: expr += " NOT "
+                }
+            } else if i == 0 && part.op == .not {
+                // Leading NOT: need a wildcard match first for FTS5 syntax
+                // FTS5 doesn't allow standalone NOT; use "* NOT term"
+                expr += "* NOT "
+            }
+            expr += fts
+        }
+        return expr.isEmpty ? [] : [expr]
     }
 
     func latestMetas(limit: Int = 1000,

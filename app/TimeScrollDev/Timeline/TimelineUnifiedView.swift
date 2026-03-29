@@ -133,7 +133,7 @@ struct TimelineUnifiedView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
 
-                TextField("Search snapshots", text: $query)
+                TextField("Search (AND OR NOT \"phrase\")", text: $query)
                     .textFieldStyle(.plain)
                     .frame(maxWidth: .infinity)
                     .submitLabel(.search)
