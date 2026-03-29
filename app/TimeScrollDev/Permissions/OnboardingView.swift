@@ -237,6 +237,24 @@ struct OnboardingView: View {
       if useDirectMode || hasAccessibility {
         accessibilityCard
       }
+
+      Button("Refresh Permission Status") {
+        Permissions.reprobeScreenRecording()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+          hasScreenRecording = Permissions.isScreenRecordingGranted()
+          hasAccessibility = Permissions.isAccessibilityGranted()
+        }
+      }
+      .font(.caption)
+      .foregroundStyle(.secondary)
+    }
+    .onReceive(Timer.publish(every: 3, on: .main, in: .common).autoconnect()) { _ in
+      // Re-probe in background, then read cached result
+      Permissions.reprobeScreenRecording()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        hasScreenRecording = Permissions.isScreenRecordingGranted()
+        hasAccessibility = Permissions.isAccessibilityGranted()
+      }
     }
   }
 

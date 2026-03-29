@@ -95,7 +95,8 @@ struct TimelineUnifiedView: View {
     @State private var debugOpen: Bool = false
 
     private var topBar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
+            // Capture toggle
             Button {
                 Task {
                     if appState.isCapturing {
@@ -105,13 +106,14 @@ struct TimelineUnifiedView: View {
                     }
                 }
             } label: {
-                Label(appState.isCapturing ? "Stop Capture" : "Start Capture",
-                      systemImage: appState.isCapturing ? "stop.circle.fill" : "record.circle.fill")
+                Image(systemName: appState.isCapturing ? "stop.circle.fill" : "record.circle.fill")
+                    .font(.title2)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(appState.isCapturing ? .red : .accentColor)
-            .controlSize(.large)
+            .buttonStyle(.plain)
+            .foregroundColor(appState.isCapturing ? .red : .accentColor)
+            .help(appState.isCapturing ? "Stop Capture" : "Start Capture")
 
+            // Search field
             TimelineToolbarSection {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
@@ -122,64 +124,73 @@ struct TimelineUnifiedView: View {
                     .submitLabel(.search)
                     .onSubmit { showResults() }
 
-                Divider().frame(height: 22)
-
-                Button {
-                    showFilters.toggle()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: activeFilterCount > 0 ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                        Text("Filters")
-                        if activeFilterCount > 0 {
-                            TimelineToolbarCountBadge(count: activeFilterCount)
-                        }
+                if !query.isEmpty {
+                    Button {
+                        query = ""
+                        model.query = ""
+                        model.load()
+                        showingResults = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
                     }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.bordered)
-                .popover(isPresented: $showFilters, arrowEdge: .bottom) {
-                    filtersPopover
-                        .padding(12)
-                        .frame(minWidth: 400)
-                }
-
-                Menu {
-                    Button("Show Results") { showResults() }
-                    Button("Search & Jump") { searchAndJump() }
-                        .keyboardShortcut(.return, modifiers: [.command])
-                } label: {
-                    Text(showingResults ? "Refresh" : "Search")
-                } primaryAction: {
-                    showResults()
-                }
-                .menuStyle(.borderedButton)
-                .fixedSize(horizontal: true, vertical: false)
             }
             .frame(maxWidth: .infinity)
 
-            if settings.vaultEnabled {
-                TimelineToolbarSection {
-                    if vault.queuedCount > 0 {
-                        Label("Queued \(vault.queuedCount)", systemImage: "tray.and.arrow.down.fill")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(.secondary)
+            // Filters
+            Button {
+                showFilters.toggle()
+            } label: {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                        .font(.title3)
+                    if activeFilterCount > 0 {
+                        TimelineToolbarCountBadge(count: activeFilterCount)
+                            .offset(x: 6, y: -6)
                     }
+                }
+            }
+            .buttonStyle(.plain)
+            .help("Filters")
+            .popover(isPresented: $showFilters, arrowEdge: .bottom) {
+                filtersPopover
+                    .padding(12)
+                    .frame(minWidth: 400)
+            }
 
-                    Button(vault.isUnlocked ? "Lock" : "Unlock…") {
-                        if vault.isUnlocked {
-                            vault.lock()
-                        } else {
-                            Task { await vault.unlock(presentingWindow: NSApp.keyWindow) }
-                        }
+            if settings.vaultEnabled {
+                Divider().frame(height: 22)
+
+                Button {
+                    if vault.isUnlocked {
+                        vault.lock()
+                    } else {
+                        Task { await vault.unlock(presentingWindow: NSApp.keyWindow) }
                     }
-                    .buttonStyle(.bordered)
+                } label: {
+                    Image(systemName: vault.isUnlocked ? "lock.open" : "lock")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .help(vault.isUnlocked ? "Lock Vault" : "Unlock Vault")
+
+                if vault.queuedCount > 0 {
+                    Text("\(vault.queuedCount)")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.secondary)
                 }
             }
 
-            TimelineToolbarSection {
+            Divider().frame(height: 22)
+
+            // Zoom controls
+            HStack(spacing: 4) {
                 Button(action: { model.msPerPoint = min(maxMsPerPt, model.msPerPoint * zoomStep) }) {
                     Image(systemName: "minus")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.plain)
 
                 Slider(value: Binding(get: {
                     let clamped = min(max(model.msPerPoint, minMsPerPt), maxMsPerPt)
@@ -194,22 +205,32 @@ struct TimelineUnifiedView: View {
                     let msPerPoint = exp(logVal)
                     model.msPerPoint = min(max(msPerPoint, minMsPerPt), maxMsPerPt)
                 }))
-                .frame(width: 140)
+                .frame(width: 100)
 
                 Button(action: { model.msPerPoint = max(minMsPerPt, model.msPerPoint / zoomStep) }) {
                     Image(systemName: "plus")
                 }
-                .buttonStyle(.bordered)
-
-                Divider().frame(height: 22)
-
-                TimelineLiveToggle(isOn: $model.followLatest)
+                .buttonStyle(.plain)
             }
-            .fixedSize(horizontal: true, vertical: false)
+
+            // Live toggle
+            Button {
+                model.followLatest.toggle()
+            } label: {
+                Image(systemName: "dot.radiowaves.left.and.right")
+                    .font(.title3)
+                    .foregroundColor(model.followLatest ? .accentColor : .secondary)
+            }
+            .buttonStyle(.plain)
+            .help("Follow newest snapshots")
 
             if settings.debugMode {
-                Button("Debug DB") { debugOpen = true }
-                    .buttonStyle(.bordered)
+                Button { debugOpen = true } label: {
+                    Image(systemName: "ladybug")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .help("Debug DB")
             }
         }
         .padding(.horizontal, 10)
@@ -457,6 +478,11 @@ struct TimelineUnifiedView: View {
 
     private func showResults() {
         preserveOpenedResultContextOnRefresh = false
+        // Clear date filters when searching so results aren't limited to one day
+        if !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            startDate = nil
+            endDate = nil
+        }
         applyFilters()
         showingResults = true
         showFilters = false
@@ -464,6 +490,10 @@ struct TimelineUnifiedView: View {
 
     private func searchAndJump() {
         preserveOpenedResultContextOnRefresh = false
+        if !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            startDate = nil
+            endDate = nil
+        }
         applyFilters()
         model.load()
         showingResults = false

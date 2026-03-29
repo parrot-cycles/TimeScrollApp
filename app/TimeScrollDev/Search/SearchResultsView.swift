@@ -215,12 +215,25 @@ struct SearchResultsView: View {
                                                       startMs: start,
                                                       endMs: end)
             } else if aiEnabled {
-                fetched = searchSvc.searchAI(trimmed,
+                let aiResults = searchSvc.searchAI(trimmed,
                                              appBundleIds: apps,
                                              startMs: start,
                                              endMs: end,
                                              limit: limit,
                                              offset: offset)
+                // Fall back to FTS if AI search returns no results
+                if aiResults.isEmpty {
+                    fetched = searchSvc.searchWithContent(trimmed,
+                                                          fuzziness: fuzz,
+                                                          intelligentAccuracy: ia,
+                                                          appBundleIds: apps,
+                                                          startMs: start,
+                                                          endMs: end,
+                                                          limit: limit,
+                                                          offset: offset)
+                } else {
+                    fetched = aiResults
+                }
             } else {
                 fetched = searchSvc.searchWithContent(trimmed,
                                                       fuzziness: fuzz,

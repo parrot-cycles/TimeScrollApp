@@ -7,8 +7,36 @@ struct GeneralPane: View {
     @State private var showAccessibilityPrompt = false
     @AppStorage("ui.timeline.invertScrollDirection") private var invertTimelineScrollDirection: Bool = false
 
+    @State private var screenRecordingOK = Permissions.isScreenRecordingGranted()
+    @State private var accessibilityOK = Permissions.isAccessibilityGranted()
+
     var body: some View {
         Form {
+            Section {
+                HStack {
+                    Label("Screen Recording", systemImage: screenRecordingOK ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(screenRecordingOK ? .green : .red)
+                    Spacer()
+                    if !screenRecordingOK {
+                        Button("Grant") { Permissions.requestScreenRecording(); refreshPermissions() }
+                    }
+                    Button("Open Settings") { Permissions.open(.screenRecording); refreshPermissions() }
+                }
+                HStack {
+                    Label("Accessibility", systemImage: accessibilityOK ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundColor(accessibilityOK ? .green : .red)
+                    Spacer()
+                    if !accessibilityOK {
+                        Button("Grant") { Permissions.requestAccessibility(); refreshPermissions() }
+                    }
+                    Button("Open Settings") { Permissions.open(.accessibility); refreshPermissions() }
+                }
+                Button("Refresh Status") { refreshPermissions() }
+                    .font(.caption)
+            } header: {
+                Text("Permissions")
+            }
+
             Section {
                 Toggle("Start minimized (menu bar only)", isOn: $settings.startMinimized)
                 Toggle("Start recording on launch", isOn: $settings.startRecordingOnStart)
@@ -195,6 +223,14 @@ struct GeneralPane: View {
     private static func formatInterval(_ value: Double) -> String {
         if value < 10.0 { return String(format: "%.1f s", value) }
         return String(format: "%.0f s", value)
+    }
+
+    private func refreshPermissions() {
+        Permissions.reprobeScreenRecording()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            screenRecordingOK = Permissions.isScreenRecordingGranted()
+            accessibilityOK = Permissions.isAccessibilityGranted()
+        }
     }
 }
 

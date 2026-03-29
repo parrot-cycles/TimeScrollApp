@@ -2,6 +2,7 @@ import Foundation
 import CoreGraphics
 import AppKit
 import ApplicationServices
+import ScreenCaptureKit
 
 enum Permissions {
     enum PrivacyPane {
@@ -18,22 +19,56 @@ enum Permissions {
         }
     }
 
+    // MARK: - Cached async probe for Screen Recording
+
+    private static var _screenRecordingProbeResult: Bool?
+    private static let probeQueue = DispatchQueue(label: "TimeScroll.PermissionProbe")
+
+    /// Call once on app launch to probe actual screen recording access in the background.
+    /// The result is cached and used by isScreenRecordingGranted().
+    static func probeScreenRecordingAsync() {
+        probeQueue.async {
+            let semaphore = DispatchSemaphore(value: 0)
+            var result = false
+            Task.detached {
+                do {
+                    _ = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false)
+                    result = true
+                } catch {
+                    result = false
+                }
+                semaphore.signal()
+            }
+            semaphore.wait()
+            _screenRecordingProbeResult = result
+        }
+    }
+
+    /// Re-probe (called by refresh buttons). Non-blocking — updates cached result.
+    static func reprobeScreenRecording() {
+        probeScreenRecordingAsync()
+    }
+
     static func isAccessibilityGranted() -> Bool {
-        // Fast check (no prompt)
         return AXIsProcessTrusted()
     }
 
     /// Triggers the system prompt to grant Accessibility access; also opens Settings.
     static func requestAccessibility() {
         let key = kAXTrustedCheckOptionPrompt.takeRetainedValue() as String
-        let opts: NSDictionary = [key: true] // prompt asynchronously
+        let opts: NSDictionary = [key: true]
         _ = AXIsProcessTrustedWithOptions(opts)
-        // Open pane to help user complete trust
         _ = open(.accessibility)
     }
 
     static func isScreenRecordingGranted() -> Bool {
-        return CGPreflightScreenCaptureAccess()
+        // 1. Standard API check (works for properly signed apps)
+        if CGPreflightScreenCaptureAccess() { return true }
+        // 2. Cached probe result from actual SCShareableContent call
+        //    (works for ad-hoc signed apps where CGPreflight lies)
+        if let cached = _screenRecordingProbeResult { return cached }
+        // 3. Not yet probed — return false, probe will update soon
+        return false
     }
 
     /// Triggers the system prompt (if possible) to request Screen Recording access.
@@ -42,7 +77,6 @@ enum Permissions {
         let granted = CGPreflightScreenCaptureAccess()
         if !granted {
             _ = CGRequestScreenCaptureAccess()
-            // Also direct users to the exact pane in case the prompt doesn't appear
             open(.screenRecording)
         }
     }
@@ -54,4 +88,3 @@ enum Permissions {
         return NSWorkspace.shared.open(url)
     }
 }
-

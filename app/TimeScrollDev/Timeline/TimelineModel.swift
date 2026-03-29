@@ -68,11 +68,23 @@ final class TimelineModel: ObservableObject {
                                              startMs: start,
                                              endMs: end)
             } else if useAI {
-                list = searchSvc.searchAIMetas(trimmed,
+                let aiList = searchSvc.searchAIMetas(trimmed,
                                                appBundleIds: appIds,
                                                startMs: start,
                                                endMs: end,
                                                limit: limit)
+                // Fall back to FTS if AI search returns no results
+                if aiList.isEmpty {
+                    list = searchSvc.searchMetas(trimmed,
+                                                 fuzziness: fuzz,
+                                                 intelligentAccuracy: ia,
+                                                 appBundleIds: appIds,
+                                                 startMs: start,
+                                                 endMs: end,
+                                                 limit: limit)
+                } else {
+                    list = aiList
+                }
             } else {
                 list = searchSvc.searchMetas(trimmed,
                                              fuzziness: fuzz,

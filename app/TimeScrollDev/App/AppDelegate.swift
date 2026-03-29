@@ -44,6 +44,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         StoragePaths.syncSharedDefaultsFromStandard()
         setupStatusItem()
 
+        // Probe actual screen recording permission in background (works for ad-hoc signed builds)
+        Permissions.probeScreenRecordingAsync()
+
         // Sparkle updater (if available)
         #if canImport(Sparkle)
         updatesDelegate = UpdatesDelegate()
