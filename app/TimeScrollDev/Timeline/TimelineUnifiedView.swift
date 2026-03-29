@@ -115,6 +115,19 @@ struct TimelineUnifiedView: View {
             .foregroundColor(appState.isCapturing ? .red : .accentColor)
             .help(appState.isCapturing ? "Stop Capture" : "Start Capture")
 
+            // Back to results button (when viewing a snapshot from search)
+            if cameFromResults && !showingResults {
+                Button {
+                    cameFromResults = false
+                    showingResults = true
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .help("Back to results")
+            }
+
             // Search field
             TimelineToolbarSection {
                 Image(systemName: "magnifyingglass")
@@ -133,6 +146,7 @@ struct TimelineUnifiedView: View {
                         model.query = ""
                         model.load()
                         showingResults = false
+                        cameFromResults = false
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundStyle(.secondary)
@@ -349,17 +363,6 @@ struct TimelineUnifiedView: View {
 
     private var calendarBar: some View {
         HStack(spacing: 6) {
-            if cameFromResults {
-                Button {
-                    cameFromResults = false
-                    showingResults = true
-                } label: {
-                    Label("Results", systemImage: "chevron.left")
-                        .font(.caption.weight(.medium))
-                }
-                .buttonStyle(.bordered)
-            }
-
             Spacer()
 
             // Previous day
