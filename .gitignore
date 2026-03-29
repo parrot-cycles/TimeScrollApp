@@ -29,3 +29,6 @@ xcuserdata/
 
 # Release artifacts
 release/*.dmg
+
+# Claude Code
+.claude/
