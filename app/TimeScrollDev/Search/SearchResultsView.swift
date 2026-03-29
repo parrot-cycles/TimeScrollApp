@@ -17,6 +17,7 @@ struct SearchResultsView: View {
     @State private var useAI: Bool = false
     @State private var viewMode: ViewMode = ViewMode(rawValue: UserDefaults.standard.string(forKey: "settings.searchViewMode") ?? "list") ?? .list
     @State private var requestToken: Int = 0
+    @State private var totalCount: Int? = nil
 
     private let pageSize: Int = 50
 
@@ -41,6 +42,7 @@ struct SearchResultsView: View {
         .onAppear {
             useAI = settings.aiEmbeddingsEnabled && settings.aiModeOn
             loadPage(0)
+            loadTotalCount()
         }
         .onChange(of: query) { _ in resetAndReload() }
         .onChange(of: appBundleIds) { _ in resetAndReload() }
@@ -51,8 +53,20 @@ struct SearchResultsView: View {
     private var header: some View {
         HStack(alignment: .top, spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(trimmedQuery.isEmpty ? "Latest Snapshots" : "Search Results")
-                    .font(.title3.weight(.semibold))
+                HStack(spacing: 8) {
+                    Text(trimmedQuery.isEmpty ? "Latest Snapshots" : "Search Results")
+                        .font(.title3.weight(.semibold))
+                    if let total = totalCount, total > 0 {
+                        Text("\(total)")
+                            .font(.callout.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    } else if !rows.isEmpty {
+                        let shown = page * pageSize + rows.count
+                        Text(hasNext ? "\(shown)+" : "\(shown)")
+                            .font(.callout.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
 
             Spacer(minLength: 16)
@@ -112,6 +126,7 @@ struct SearchResultsView: View {
                                     SearchRowView(row: row)
                                 }
                                 .buttonStyle(.plain)
+                                .contextMenu { resultContextMenu(for: row) }
                             }
                         }
                         .padding(16)
@@ -125,6 +140,7 @@ struct SearchResultsView: View {
                                     SearchTileView(row: row)
                                 }
                                 .buttonStyle(.plain)
+                                .contextMenu { resultContextMenu(for: row) }
                             }
                         }
                         .padding(16)
@@ -187,7 +203,26 @@ struct SearchResultsView: View {
 
     private func resetAndReload() {
         page = 0
+        totalCount = nil
         loadPage(0)
+        loadTotalCount()
+    }
+
+    private func loadTotalCount() {
+        let trimmed = trimmedQuery
+        guard !trimmed.isEmpty else { totalCount = nil; return }
+        let fuzz = settings.fuzziness
+        let ia = settings.intelligentAccuracy
+        let apps = appBundleIds
+        let start = startMs
+        let end = endMs
+        let svc = search
+        DispatchQueue.global(qos: .utility).async {
+            let count = svc.searchCount(for: trimmed, fuzziness: fuzz, intelligentAccuracy: ia, appBundleIds: apps, startMs: start, endMs: end)
+            DispatchQueue.main.async {
+                totalCount = count
+            }
+        }
     }
 
     private func loadPage(_ p: Int) {
@@ -258,6 +293,55 @@ struct SearchResultsView: View {
                 self.rows = preparedRows
                 self.page = p
                 self.isLoading = false
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func resultContextMenu(for row: SearchResultDisplayRow) -> some View {
+        let path = row.result.path
+        let url = URL(fileURLWithPath: path)
+        let date = Date(timeIntervalSince1970: TimeInterval(row.result.startedAtMs) / 1000)
+        let fmt = DateFormatter()
+        let _ = { fmt.dateStyle = .medium; fmt.timeStyle = .medium }()
+
+        // Metadata header
+        Section {
+            Text(fmt.string(from: date))
+            if let app = row.result.appName ?? row.result.appBundleId {
+                Text(app)
+            }
+        }
+
+        Divider()
+
+        Button {
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        } label: {
+            Label("Reveal in Finder", systemImage: "folder")
+        }
+
+        Button {
+            NSWorkspace.shared.open(url)
+        } label: {
+            Label("Open in Preview", systemImage: "eye")
+        }
+
+        Button {
+            let pb = NSPasteboard.general
+            pb.clearContents()
+            pb.setString(path, forType: .string)
+        } label: {
+            Label("Copy File Path", systemImage: "doc.on.doc")
+        }
+
+        if !row.result.content.isEmpty {
+            Button {
+                let pb = NSPasteboard.general
+                pb.clearContents()
+                pb.setString(row.result.content, forType: .string)
+            } label: {
+                Label("Copy OCR Text", systemImage: "doc.text")
             }
         }
     }

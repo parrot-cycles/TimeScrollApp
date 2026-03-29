@@ -105,6 +105,48 @@ extension DB {
         return try hydrateSearchResultContents(results)
     }
 
+    /// Count total results matching FTS query (for showing "N results" in UI).
+    func searchCount(_ ftsParts: [String],
+                     appBundleIds: [String]? = nil,
+                     startMs: Int64? = nil,
+                     endMs: Int64? = nil) throws -> Int {
+        try onQueueSync {
+            guard !ftsParts.isEmpty else { return 0 }
+            try openIfNeeded()
+            guard let db = db else { return 0 }
+            var sql = "SELECT COUNT(*) FROM ts_snapshot s WHERE 1=1"
+            for _ in ftsParts {
+                sql += """
+                 AND s.id IN (
+                    SELECT snapshot_id FROM ts_text_chunk WHERE content MATCH ?
+                    UNION
+                    SELECT rowid AS snapshot_id FROM ts_text WHERE content MATCH ?
+                 )
+                """
+            }
+            if let s = startMs { sql += " AND s.started_at_ms >= \(s)" }
+            if let e = endMs { sql += " AND s.started_at_ms <= \(e)" }
+            if let ids = appBundleIds, !ids.isEmpty {
+                let placeholders = Array(repeating: "?", count: ids.count).joined(separator: ",")
+                sql += " AND s.app_bundle_id IN (\(placeholders))"
+            }
+            sql += ";"
+            var stmt: OpaquePointer?
+            defer { sqlite3_finalize(stmt) }
+            guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return 0 }
+            var idx: Int32 = 1
+            for p in ftsParts {
+                sqlite3_bind_text(stmt, idx, p, -1, SQLITE_TRANSIENT); idx += 1
+                sqlite3_bind_text(stmt, idx, p, -1, SQLITE_TRANSIENT); idx += 1
+            }
+            if let ids = appBundleIds, !ids.isEmpty {
+                for bid in ids { sqlite3_bind_text(stmt, idx, bid, -1, SQLITE_TRANSIENT); idx += 1 }
+            }
+            guard sqlite3_step(stmt) == SQLITE_ROW else { return 0 }
+            return Int(sqlite3_column_int64(stmt, 0))
+        }
+    }
+
     /// Core FTS search used by both `searchMetas` and `searchWithContent` wrappers.
     private func searchUnified(ftsParts: [String],
                                appBundleIds: [String]?,

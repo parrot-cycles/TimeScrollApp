@@ -17,6 +17,8 @@ struct TimelineUnifiedView: View {
     @State private var showingResults: Bool = false
     @State private var preserveOpenedResultContextOnRefresh: Bool = false
     @State private var showCalendar: Bool = false
+    @State private var cameFromResults: Bool = false
+    @FocusState private var searchFieldFocused: Bool
     @State private var calendarDate: Date = Date()
     @State private var calendarDaysWithContent: Set<Int> = []
 
@@ -123,6 +125,7 @@ struct TimelineUnifiedView: View {
                     .frame(maxWidth: .infinity)
                     .submitLabel(.search)
                     .onSubmit { showResults() }
+                    .focused($searchFieldFocused)
 
                 if !query.isEmpty {
                     Button {
@@ -285,6 +288,7 @@ struct TimelineUnifiedView: View {
                                       endMs: model.endMs,
                                       onOpen: { row, _ in
                                           preserveOpenedResultContextOnRefresh = true
+                                          cameFromResults = true
                                           showingResults = false
                                           model.openSnapshot(id: row.id, anchorStartedAtMs: row.startedAtMs)
                                       },
@@ -345,6 +349,17 @@ struct TimelineUnifiedView: View {
 
     private var calendarBar: some View {
         HStack(spacing: 6) {
+            if cameFromResults {
+                Button {
+                    cameFromResults = false
+                    showingResults = true
+                } label: {
+                    Label("Results", systemImage: "chevron.left")
+                        .font(.caption.weight(.medium))
+                }
+                .buttonStyle(.bordered)
+            }
+
             Spacer()
 
             // Previous day
@@ -510,6 +525,19 @@ struct TimelineUnifiedView: View {
                     return nil
                 }
                 return event
+            }
+            // Cmd+F: focus search field
+            if event.modifierFlags.contains(.command) && event.keyCode == 3 { // 3 = F
+                searchFieldFocused = true
+                return nil
+            }
+            // Escape: back to results or clear search
+            if event.keyCode == 53 { // Escape
+                if cameFromResults {
+                    cameFromResults = false
+                    showingResults = true
+                    return nil
+                }
             }
             // Ignore other modified keypresses
             if event.modifierFlags.contains(.command) || event.modifierFlags.contains(.option) || event.modifierFlags.contains(.control) {

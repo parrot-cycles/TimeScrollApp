@@ -75,6 +75,16 @@ final class SearchService {
         return parts.joined(separator: " AND ")
     }
 
+    func searchCount(for query: String,
+                     fuzziness: SettingsStore.Fuzziness,
+                     intelligentAccuracy: Bool,
+                     appBundleIds: [String]? = nil,
+                     startMs: Int64? = nil,
+                     endMs: Int64? = nil) -> Int {
+        let parts = ftsParts(for: query, fuzziness: fuzziness, intelligentAccuracy: intelligentAccuracy)
+        return (try? DB.shared.searchCount(parts, appBundleIds: appBundleIds, startMs: startMs, endMs: endMs)) ?? 0
+    }
+
     func searchMetas(_ query: String,
                      fuzziness: SettingsStore.Fuzziness,
                      intelligentAccuracy: Bool,

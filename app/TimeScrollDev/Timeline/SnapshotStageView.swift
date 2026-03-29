@@ -27,6 +27,47 @@ struct SnapshotStageView: View {
                         .onAppear {
                             refreshRects()
                         }
+                        .contextMenu {
+                            if let sel = model.selected {
+                                let url = URL(fileURLWithPath: sel.path)
+                                let date = Date(timeIntervalSince1970: TimeInterval(sel.startedAtMs) / 1000)
+                                let fmt = { () -> DateFormatter in let f = DateFormatter(); f.dateStyle = .medium; f.timeStyle = .medium; return f }()
+
+                                Section {
+                                    Text(fmt.string(from: date))
+                                    if let app = sel.appName ?? sel.appBundleId {
+                                        Text(app)
+                                    }
+                                }
+
+                                Divider()
+
+                                Button { NSWorkspace.shared.activateFileViewerSelecting([url]) } label: {
+                                    Label("Reveal in Finder", systemImage: "folder")
+                                }
+                                Button { NSWorkspace.shared.open(url) } label: {
+                                    Label("Open in Preview", systemImage: "eye")
+                                }
+                                Button { copyCurrent() } label: {
+                                    Label("Copy Image", systemImage: "photo")
+                                }
+                                Button { copyCurrentText() } label: {
+                                    Label("Copy OCR Text", systemImage: "doc.text")
+                                }
+                                Button {
+                                    let pb = NSPasteboard.general; pb.clearContents()
+                                    pb.setString(sel.path, forType: .string)
+                                } label: {
+                                    Label("Copy File Path", systemImage: "doc.on.doc")
+                                }
+
+                                Divider()
+
+                                Button { saveCurrent() } label: {
+                                    Label("Save As...", systemImage: "square.and.arrow.down")
+                                }
+                            }
+                        }
                         // Selection change handlers moved to outer container so they fire
                         // even when there is no current image.
                 } else {
