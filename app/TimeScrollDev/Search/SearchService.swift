@@ -20,13 +20,15 @@ final class SearchService {
             }
         }
 
-        func tokenToFTS(_ part: ParsedSearchQuery.Part) -> String {
+        var parts: [String] = []
+        for part in parsed.parts {
             if part.isPhrase {
                 let escaped = part.text.lowercased().replacingOccurrences(of: "\"", with: " ")
-                return "\"\(escaped)\""
+                parts.append("\"\(escaped)\"")
+                continue
             }
             let token = part.text.lowercased()
-            guard !token.isEmpty else { return token }
+            if token.isEmpty { continue }
 
             let variants: [String]
             if intelligentAccuracy {
@@ -43,48 +45,12 @@ final class SearchService {
                     let pref = String(v.prefix(min(p, v.count)))
                     return "\(pref)*"
                 }
-                return expanded.count == 1 ? expanded[0] : "(\(expanded.joined(separator: " OR ")))"
+                parts.append(expanded.joined(separator: " OR "))
             } else {
-                return variants.count == 1 ? variants[0] : "(\(variants.joined(separator: " OR ")))"
+                parts.append(variants.joined(separator: " OR "))
             }
         }
-
-        // Build a single FTS5 expression respecting AND/OR/NOT operators.
-        // Group consecutive AND parts together; OR creates alternatives;
-        // NOT prefixes with FTS5 NOT.
-        //
-        // Strategy: build one combined FTS5 expression string when OR/NOT are used,
-        // otherwise fall back to multiple MATCH clauses (original behavior, better performance).
-        let hasOrOrNot = parsed.parts.contains { $0.op == .or || $0.op == .not }
-
-        if !hasOrOrNot {
-            // Simple case: all AND — each part is a separate MATCH clause (original behavior)
-            return parsed.parts.compactMap { part in
-                let fts = tokenToFTS(part)
-                return fts.isEmpty ? nil : fts
-            }
-        }
-
-        // Complex case: build single FTS5 expression with AND/OR/NOT
-        var expr = ""
-        for (i, part) in parsed.parts.enumerated() {
-            let fts = tokenToFTS(part)
-            guard !fts.isEmpty else { continue }
-
-            if i > 0 && !expr.isEmpty {
-                switch part.op {
-                case .and: expr += " AND "
-                case .or: expr += " OR "
-                case .not: expr += " NOT "
-                }
-            } else if i == 0 && part.op == .not {
-                // Leading NOT: need a wildcard match first for FTS5 syntax
-                // FTS5 doesn't allow standalone NOT; use "* NOT term"
-                expr += "* NOT "
-            }
-            expr += fts
-        }
-        return expr.isEmpty ? [] : [expr]
+        return parts
     }
 
     func latestMetas(limit: Int = 1000,

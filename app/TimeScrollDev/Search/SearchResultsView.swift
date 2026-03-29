@@ -18,6 +18,8 @@ struct SearchResultsView: View {
     @State private var viewMode: ViewMode = ViewMode(rawValue: UserDefaults.standard.string(forKey: "settings.searchViewMode") ?? "list") ?? .list
     @State private var requestToken: Int = 0
     @State private var totalCount: Int? = nil
+    @State private var searchMethod: SearchMethod = .none
+    enum SearchMethod { case none, fts, ai, aiFallbackFTS }
 
     private let pageSize: Int = 50
 
@@ -65,6 +67,15 @@ struct SearchResultsView: View {
                         Text(hasNext ? "\(shown)+" : "\(shown)")
                             .font(.callout.weight(.medium))
                             .foregroundStyle(.secondary)
+                    }
+                    if searchMethod != .none {
+                        Text(searchMethodLabel)
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(searchMethodColor.opacity(0.15))
+                            .foregroundStyle(searchMethodColor)
+                            .clipShape(Capsule())
                     }
                 }
             }
@@ -243,12 +254,14 @@ struct SearchResultsView: View {
 
         DispatchQueue.global(qos: .userInitiated).async {
             let fetched: [SearchResult]
+            var method: SearchMethod = .none
             if trimmed.isEmpty {
                 fetched = searchSvc.latestWithContent(limit: limit,
                                                       offset: offset,
                                                       appBundleIds: apps,
                                                       startMs: start,
                                                       endMs: end)
+                method = .none
             } else if aiEnabled {
                 let aiResults = searchSvc.searchAI(trimmed,
                                              appBundleIds: apps,
@@ -256,7 +269,6 @@ struct SearchResultsView: View {
                                              endMs: end,
                                              limit: limit,
                                              offset: offset)
-                // Fall back to FTS if AI search returns no results
                 if aiResults.isEmpty {
                     fetched = searchSvc.searchWithContent(trimmed,
                                                           fuzziness: fuzz,
@@ -266,8 +278,10 @@ struct SearchResultsView: View {
                                                           endMs: end,
                                                           limit: limit,
                                                           offset: offset)
+                    method = .aiFallbackFTS
                 } else {
                     fetched = aiResults
+                    method = .ai
                 }
             } else {
                 fetched = searchSvc.searchWithContent(trimmed,
@@ -278,6 +292,7 @@ struct SearchResultsView: View {
                                                       endMs: end,
                                                       limit: limit,
                                                       offset: offset)
+                method = .fts
             }
             let preparedRows = Array(fetched.prefix(self.pageSize)).map {
                 SearchResultDisplayRow(result: $0, query: trimmed, intelligentAccuracy: ia)
@@ -292,8 +307,27 @@ struct SearchResultsView: View {
                 self.hasNext = fetched.count > self.pageSize
                 self.rows = preparedRows
                 self.page = p
+                self.searchMethod = method
                 self.isLoading = false
             }
+        }
+    }
+
+    private var searchMethodLabel: String {
+        switch searchMethod {
+        case .none: return ""
+        case .fts: return "FTS"
+        case .ai: return "AI"
+        case .aiFallbackFTS: return "AI→FTS"
+        }
+    }
+
+    private var searchMethodColor: Color {
+        switch searchMethod {
+        case .none: return .secondary
+        case .fts: return .blue
+        case .ai: return .purple
+        case .aiFallbackFTS: return .orange
         }
     }
 

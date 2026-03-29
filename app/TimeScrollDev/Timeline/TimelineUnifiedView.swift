@@ -19,6 +19,8 @@ struct TimelineUnifiedView: View {
     @State private var showCalendar: Bool = false
     @State private var cameFromResults: Bool = false
     @FocusState private var searchFieldFocused: Bool
+    @State private var filterConditions: [FilterCondition] = [FilterCondition(field: .text, op: .contains, value: "")]
+    @State private var filterMatchMode: FilterMatchMode = .all
     @State private var calendarDate: Date = Date()
     @State private var calendarDaysWithContent: Set<Int> = []
 
@@ -30,6 +32,7 @@ struct TimelineUnifiedView: View {
         (model.startMs != nil ? 1 : 0)
         + (model.endMs != nil ? 1 : 0)
         + (model.selectedAppBundleIds.isEmpty ? 0 : 1)
+        + filterConditions.filter { !$0.value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.count
     }
 
     var body: some View {
@@ -133,7 +136,7 @@ struct TimelineUnifiedView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
 
-                TextField("Search (AND OR NOT \"phrase\")", text: $query)
+                TextField("Search snapshots", text: $query)
                     .textFieldStyle(.plain)
                     .frame(maxWidth: .infinity)
                     .submitLabel(.search)
@@ -257,6 +260,7 @@ struct TimelineUnifiedView: View {
 
     private var filtersPopover: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // Date range
             HStack(spacing: 8) {
                 Text("From:")
                 DatePicker("From", selection: Binding(get: { startDate ?? Date() }, set: { startDate = $0 }), displayedComponents: [.date, .hourAndMinute])
@@ -267,25 +271,109 @@ struct TimelineUnifiedView: View {
                 DatePicker("To", selection: Binding(get: { endDate ?? Date() }, set: { endDate = $0 }), displayedComponents: [.date, .hourAndMinute])
                     .labelsHidden()
             }
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Apps:")
-                TimelineAppMultiFilter(selected: $model.selectedAppBundleIds)
-                    .frame(minHeight: 140, maxHeight: 220)
-            }
-            Divider()
+
             HStack {
-                Button("Clear Dates") {
-                    startDate = nil
-                    endDate = nil
+                Button("Clear Dates") { startDate = nil; endDate = nil }
+                Button("Clear Apps") { model.selectedAppBundleIds.removeAll() }
+            }
+
+            Divider()
+
+            // Smart filter conditions
+            SmartFilterView(
+                conditions: $filterConditions,
+                matchMode: $filterMatchMode,
+                onApply: {
+                    applySmartFilters()
+                    showFilters = false
                 }
-                Button("Clear Apps") {
-                    model.selectedAppBundleIds.removeAll()
-                }
-                Spacer()
-                Button("Done") { showFilters = false }
-                    .keyboardShortcut(.defaultAction)
+            )
+
+            Divider()
+
+            // App filter (collapsible)
+            DisclosureGroup("Apps") {
+                TimelineAppMultiFilter(selected: $model.selectedAppBundleIds)
+                    .frame(minHeight: 100, maxHeight: 180)
             }
         }
+    }
+
+    private func applySmartFilters() {
+        // Apply date filters
+        applyFilters()
+
+        // Build query from text conditions
+        let textConditions = filterConditions.compactMap { $0.toFTS() }
+        if !textConditions.isEmpty {
+            let includes = textConditions.filter { !$0.isExclude }.map { $0.match }
+            let excludes = textConditions.filter { $0.isExclude }.map { $0.match }
+
+            var queryParts: [String] = []
+            if filterMatchMode == .all {
+                queryParts.append(contentsOf: includes)
+            } else {
+                if !includes.isEmpty {
+                    queryParts.append(includes.joined(separator: " OR "))
+                }
+            }
+            for ex in excludes {
+                queryParts.append("NOT \(ex)")
+            }
+            query = queryParts.joined(separator: " ")
+        }
+
+        // Apply app name conditions to the app filter
+        for condition in filterConditions {
+            if condition.field == .appName && !condition.value.isEmpty {
+                // This is handled via the SQL query, not the app multi-select
+                // For now, search by app name in text
+            }
+        }
+
+        // Apply year/month/day via date range
+        for condition in filterConditions {
+            let trimmed = condition.value.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+
+            if condition.field == .year, let yr = Int(trimmed) {
+                var cal = Calendar.current
+                cal.timeZone = .current
+                if let s = cal.date(from: DateComponents(year: yr, month: 1, day: 1)),
+                   let e = cal.date(from: DateComponents(year: yr + 1, month: 1, day: 1)) {
+                    if condition.op == .equals || condition.op == .contains {
+                        startDate = s; endDate = e
+                    }
+                }
+            }
+            if condition.field == .month, let mo = Int(trimmed), mo >= 1, mo <= 12 {
+                var cal = Calendar.current
+                cal.timeZone = .current
+                let yr = cal.component(.year, from: Date())
+                if let s = cal.date(from: DateComponents(year: yr, month: mo, day: 1)),
+                   let e = cal.date(byAdding: .month, value: 1, to: s) {
+                    if condition.op == .equals || condition.op == .contains {
+                        startDate = s; endDate = e
+                    }
+                }
+            }
+            if condition.field == .day, let d = Int(trimmed), d >= 1, d <= 31 {
+                var cal = Calendar.current
+                cal.timeZone = .current
+                let yr = cal.component(.year, from: Date())
+                let mo = cal.component(.month, from: Date())
+                if let s = cal.date(from: DateComponents(year: yr, month: mo, day: d)),
+                   let e = cal.date(byAdding: .day, value: 1, to: s) {
+                    if condition.op == .equals || condition.op == .contains {
+                        startDate = s; endDate = e
+                    }
+                }
+            }
+        }
+
+        applyFilters()
+        model.load()
+        showingResults = !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var centerStage: some View {
