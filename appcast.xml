@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Scrollback</title>
+        <link>https://github.com/parrot-cycles/Scrollback</link>
+        <description>Local screen memory and search app for macOS</description>
+        <language>en</language>
+        <item>
+            <title>Version 2.0.0</title>
+            <sparkle:version>2.0.0</sparkle:version>
+            <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <pubDate>Sun, 05 Apr 2026 17:27:27 +0000</pubDate>
+            <description><![CDATA[
+<h2>v2.0.0 — Scrollback rename + SwiftUI modernization</h2>
+<p><strong>Major release:</strong> this fork is now called <strong>Scrollback</strong> with its own bundle ID, update channel, and signing keys. It is no longer tied to the upstream TimeScroll project.</p>
+<h3>Breaking changes</h3>
+<ul>
+    <li>App renamed TimeScroll → Scrollback. Bundle ID is now <code>com.parrotcycles.scrollback</code>.</li>
+    <li>You will need to re-grant Screen Recording and Accessibility permissions after updating (macOS ties these to bundle ID).</li>
+    <li>macOS 14.0+ now required (was 13.0).</li>
+    <li>Dock icon is now hidden when no window is open — app lives in the menu bar. Toggle in Settings → General if you prefer always-on Dock.</li>
+</ul>
+<h3>Under the hood</h3>
+<ul>
+    <li>Migrated 7 model classes to Swift's @Observable macro.</li>
+    <li>Converted ~32 DispatchQueue hops to structured concurrency (Task / MainActor.run).</li>
+    <li>Modernized ~100 deprecated SwiftUI calls (foregroundColor, cornerRadius, onChange).</li>
+    <li>Added accessibility labels to 15+ icon-only buttons.</li>
+</ul>
+<p>Existing snapshots and database are preserved; the storage folder name is intentionally unchanged for data continuity.</p>
+]]></description>
+            <enclosure
+                url="https://github.com/parrot-cycles/Scrollback/releases/download/v2.0.0/Scrollback-v2.0.0.dmg"
+                sparkle:edSignature="PBip9n0l0TwYhiaJfTWzLNx147K5tvTuwFHNXnj19L+uR3lG2/fSCKtTLKRUqnTC4GuatBDO6qQdmwj1w3b4Ag=="
+                length="9647666"
+                type="application/octet-stream" />
+        </item>
+    </channel>
+</rss>
