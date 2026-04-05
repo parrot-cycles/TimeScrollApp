@@ -19,6 +19,9 @@ struct ScrollbackApp: App {
             "ui.timeline.compressed": true,
             "ui.timeline.invertScrollDirection": false
         ])
+        // v2.1.0 rename migration: copy TimeScrollShared/TimeScroll → ScrollbackShared/Scrollback.
+        // Must run before any StoragePaths usage so the DB opens at the new location.
+        ScrollbackMigration.runIfNeeded()
         // Ensure App Group defaults are ready before any StoragePaths usage
         StoragePaths.syncSharedDefaultsFromStandard()
         

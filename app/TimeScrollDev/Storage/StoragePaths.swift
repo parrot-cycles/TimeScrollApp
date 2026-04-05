@@ -4,7 +4,7 @@ import Security
 
 /// Centralized file locations for DB, snapshots, vault and queues.
 /// Resolves to a user-selected folder if configured (via security-scoped bookmark),
-/// otherwise defaults to Application Support/TimeScroll.
+/// otherwise defaults to Application Support/ScrollbackShared/Scrollback.
 enum StoragePaths {
     // UserDefaults keys (also used by background workers)
     static let bookmarkKey = "settings.storageFolderBookmark"
@@ -16,7 +16,7 @@ enum StoragePaths {
     // App Group identifier used when the app is Apple-signed with the matching entitlement.
     // Public/local builds must NOT fall back to ~/Library/Group Containers/... because macOS
     // treats that as protected "other apps' data" and will repeatedly prompt for access.
-    static let appGroupID = "group.com.muzhen.TimeScroll.shared"
+    static let appGroupID = "group.com.parrotcycles.scrollback.shared"
     static let sharedStateQueue = DispatchQueue(label: "Scrollback.StoragePaths.SharedState")
     static let sharedStateFilename = "shared-settings.plist"
     static let sharedSubdirectoryName = "Shared"
@@ -46,11 +46,11 @@ enum StoragePaths {
 
     private static func unmanagedSharedSupportRoot() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        return base.appendingPathComponent("TimeScrollShared", isDirectory: true)
+        return base.appendingPathComponent("ScrollbackShared", isDirectory: true)
     }
 
     /// Returns the current storage root URL. If a security-scoped bookmark is stored,
-    /// this resolves it; otherwise returns ~/Library/Application Support/TimeScroll.
+    /// this resolves it; otherwise returns ~/Library/Application Support/ScrollbackShared/Scrollback.
     static func currentRoot() -> URL {
         if let bd = sharedData(forKey: bookmarkKey) {
             var stale = false
@@ -72,7 +72,7 @@ enum StoragePaths {
     static func defaultRoot() -> URL {
         let base = sharedSupportRoot()
         fputs("[StoragePaths] Using shared support root: \(base.path)\n", stderr)
-        return base.appendingPathComponent("TimeScroll", isDirectory: true)
+        return base.appendingPathComponent("Scrollback", isDirectory: true)
     }
 
     /// Returns the URL for the SQLite database file under the current root.

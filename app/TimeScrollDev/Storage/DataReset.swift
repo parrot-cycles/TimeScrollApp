@@ -15,7 +15,7 @@ enum DataReset {
         }
         // Also delete the default Application Support folder if different, to ensure full reset
         let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let defaultDir = appSupport.appendingPathComponent("TimeScroll", isDirectory: true)
+        let defaultDir = appSupport.appendingPathComponent("Scrollback", isDirectory: true)
         if defaultDir.path != StoragePaths.currentRoot().path, fm.fileExists(atPath: defaultDir.path) {
             try? fm.removeItem(at: defaultDir)
         }

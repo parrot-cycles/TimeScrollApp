@@ -65,13 +65,13 @@ final class LineIO {
 // Lightweight file logger for the MCP helper. Keep usage minimal to avoid interfering with stdout.
 enum MCPFileLogger {
     private static let q = DispatchQueue(label: "scrollback.mcp.logger")
-    private static let appGroupID = "group.com.muzhen.TimeScroll.shared"
+    private static let appGroupID = "group.com.parrotcycles.scrollback.shared"
 
     static var logURL: URL {
         let base = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID)?
             .appendingPathComponent("Logs", isDirectory: true)
             ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-                .appendingPathComponent("TimeScrollShared/Logs", isDirectory: true)
+                .appendingPathComponent("ScrollbackShared/Logs", isDirectory: true)
         if !FileManager.default.fileExists(atPath: base.path) {
             try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         }

@@ -3,8 +3,7 @@ import Foundation
 
 enum MobileCLIPModelStore {
     static func modelsRoot() -> URL {
-        let root = StoragePaths.sharedSupportRoot()
-            .appendingPathComponent("TimeScroll", isDirectory: true)
+        let root = StoragePaths.defaultRoot()
             .appendingPathComponent("Models", isDirectory: true)
             .appendingPathComponent("MobileCLIP2", isDirectory: true)
         if !FileManager.default.fileExists(atPath: root.path) {
