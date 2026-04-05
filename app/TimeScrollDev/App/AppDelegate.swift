@@ -58,8 +58,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         print("[Sparkle] SPUStandardUpdaterController initialized")
         applySparklePrefsFromSettings()
         // Optional: initial background check shortly after launch
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            guard let self else { return }
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(3))
+            guard self != nil else { return }
             if SettingsStore.sharedEnableAutoCheckUpdatesSnapshot() {
                 updaterController.updater.checkForUpdatesInBackground()
                 print("[Sparkle] Scheduled initial background update check")
@@ -68,7 +69,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #endif
 
         // Apply start-minimized and dock visibility policy
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             // Load vault prefs
             VaultManager.shared.loadPrefs()
             self?.applyStartMinimizedIfNeeded()

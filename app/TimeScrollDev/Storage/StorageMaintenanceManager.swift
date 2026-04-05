@@ -19,7 +19,8 @@ final class StorageMaintenanceManager {
         scheduled.tolerance = 5 * 60
         timer = scheduled
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 90) { [weak self] in
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(90))
             self?.runIfNeeded()
         }
     }

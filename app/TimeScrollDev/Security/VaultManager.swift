@@ -1,18 +1,20 @@
 import Foundation
 import LocalAuthentication
 import AppKit
+import Observation
 
 
 @MainActor
-final class VaultManager: ObservableObject {
+@Observable
+final class VaultManager {
     static let shared = VaultManager()
 
-    @Published private(set) var isVaultEnabled: Bool = false
-    @Published private(set) var isUnlocked: Bool = false
-    @Published private(set) var queuedCount: Int = 0
+    private(set) var isVaultEnabled: Bool = false
+    private(set) var isUnlocked: Bool = false
+    private(set) var queuedCount: Int = 0
 
-    private var inactivityTimer: Timer?
-    private var defaultsObserver: NSObjectProtocol?
+    @ObservationIgnored private var inactivityTimer: Timer?
+    @ObservationIgnored private var defaultsObserver: NSObjectProtocol?
 
     private init() {
         loadPrefs()

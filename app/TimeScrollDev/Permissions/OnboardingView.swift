@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 struct OnboardingView: View {
-  @EnvironmentObject var settings: SettingsStore
+  @Environment(SettingsStore.self) private var settings
   @State private var currentStep = 0
 
   // Step 0: Capture mode
@@ -74,7 +74,7 @@ struct OnboardingView: View {
         .overlay(Circle().stroke(Color.primary.opacity(0.1), lineWidth: 1))
         .shadow(color: .black.opacity(0.08), radius: 3, x: 0, y: 1)
       VStack(alignment: .leading, spacing: 4) {
-        Text("Welcome to TimeScroll")
+        Text("Welcome to Scrollback")
           .font(.title2).fontWeight(.semibold)
         Text(headerSubtitle)
           .foregroundStyle(.secondary)
@@ -90,7 +90,7 @@ struct OnboardingView: View {
 
   private var headerSubtitle: String {
     switch currentStep {
-    case 0: return "Choose how TimeScroll captures text from your screen."
+    case 0: return "Choose how Scrollback captures text from your screen."
     case 1: return "Keep your data secure with encryption."
     case 2: return "Enhance your experience with AI features."
     default: return "We need macOS permissions to capture your screen."
@@ -178,7 +178,7 @@ struct OnboardingView: View {
           VStack(alignment: .leading, spacing: 4) {
             Text("MCP Integration")
               .font(.headline)
-            Text("Enables tools for AI assistants like Claude to search your TimeScroll history.")
+            Text("Enables tools for AI assistants like Claude to search your Scrollback history.")
               .font(.subheadline)
               .foregroundStyle(.secondary)
           }
@@ -240,7 +240,8 @@ struct OnboardingView: View {
 
       Button("Refresh Permission Status") {
         Permissions.reprobeScreenRecording()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        Task { @MainActor in
+          try? await Task.sleep(for: .seconds(1))
           hasScreenRecording = Permissions.isScreenRecordingGranted()
           hasAccessibility = Permissions.isAccessibilityGranted()
         }
@@ -251,7 +252,8 @@ struct OnboardingView: View {
     .onReceive(Timer.publish(every: 3, on: .main, in: .common).autoconnect()) { _ in
       // Re-probe in background, then read cached result
       Permissions.reprobeScreenRecording()
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      Task { @MainActor in
+        try? await Task.sleep(for: .seconds(1))
         hasScreenRecording = Permissions.isScreenRecordingGranted()
         hasAccessibility = Permissions.isAccessibilityGranted()
       }
@@ -273,7 +275,7 @@ struct OnboardingView: View {
         .buttonStyle(.borderedProminent)
         .keyboardShortcut(.defaultAction)
       } else {
-        Button("Start TimeScroll") {
+        Button("Start Scrollback") {
           startCaptureAndClose()
         }
         .buttonStyle(.borderedProminent)
@@ -296,7 +298,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 2) {
           Text("Screen Recording")
             .font(.headline)
-          Text("Allows TimeScroll to capture screenshots for your personal timeline.")
+          Text("Allows Scrollback to capture screenshots for your personal timeline.")
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }
@@ -353,7 +355,8 @@ struct OnboardingView: View {
               return
             }
             Permissions.requestAccessibility()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            Task { @MainActor in
+              try? await Task.sleep(for: .milliseconds(500))
               hasAccessibility = Permissions.isAccessibilityGranted()
             }
           }) {
@@ -382,7 +385,8 @@ struct OnboardingView: View {
     }
     isRequesting = true
     Permissions.requestScreenRecording()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+    Task { @MainActor in
+      try? await Task.sleep(for: .milliseconds(500))
       isRequesting = false
       recheck()
     }
@@ -464,7 +468,7 @@ private struct StatusDot: View {
 #if DEBUG
 struct OnboardingView_Previews: PreviewProvider {
   static var previews: some View {
-    OnboardingView().environmentObject(SettingsStore.shared)
+    OnboardingView().environment(SettingsStore.shared)
       .frame(width: 600)
       .padding()
   }

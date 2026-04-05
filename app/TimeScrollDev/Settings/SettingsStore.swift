@@ -1,7 +1,9 @@
 import Foundation
+import Observation
 
 @MainActor
-final class SettingsStore: ObservableObject {
+@Observable
+final class SettingsStore {
     static let shared = SettingsStore()
     nonisolated static let defaultTextProcessingMode: TextProcessingMode = .ocr
     nonisolated static let defaultOCRMode: OCRMode = .fast
@@ -22,7 +24,7 @@ final class SettingsStore: ObservableObject {
     private init() {
         load()
     }
-    private var isLoading: Bool = false
+    @ObservationIgnored private var isLoading: Bool = false
 
     enum OCRMode: String, CaseIterable, Identifiable { case fast, accurate; var id: String { rawValue } }
     enum Fuzziness: String, CaseIterable, Identifiable { case off, low, medium, high; var id: String { rawValue } }
@@ -34,81 +36,81 @@ final class SettingsStore: ObservableObject {
         var id: String { rawValue }
     }
 
-    @Published var textProcessingMode: TextProcessingMode = SettingsStore.defaultTextProcessingMode { didSet { if !isLoading { save() } } }
-    @Published var ocrMode: OCRMode = SettingsStore.defaultOCRMode { didSet { if !isLoading { save() } } }
-    @Published var captureMinInterval: Double = SettingsStore.defaultCaptureMinInterval { didSet { if !isLoading { save() } } }
-    @Published var fuzziness: Fuzziness = .low { didSet { if !isLoading { save() } } }
-    @Published var retentionDays: Int = SettingsStore.defaultRetentionDays { didSet { if !isLoading { save() } } }
-    @Published var showHighlights: Bool = true { didSet { if !isLoading { save() } } }
-    @Published var recentOCRBoxesOnly: Bool = false { didSet { if !isLoading { save() } } }
-    @Published var debugMode: Bool = false { didSet { if !isLoading { save() } } }
-    @Published var refreshOnNewSnapshot: Bool = true { didSet { if !isLoading { save() } } }
+    var textProcessingMode: TextProcessingMode = SettingsStore.defaultTextProcessingMode { didSet { if !isLoading { save() } } }
+    var ocrMode: OCRMode = SettingsStore.defaultOCRMode { didSet { if !isLoading { save() } } }
+    var captureMinInterval: Double = SettingsStore.defaultCaptureMinInterval { didSet { if !isLoading { save() } } }
+    var fuzziness: Fuzziness = .low { didSet { if !isLoading { save() } } }
+    var retentionDays: Int = SettingsStore.defaultRetentionDays { didSet { if !isLoading { save() } } }
+    var showHighlights: Bool = true { didSet { if !isLoading { save() } } }
+    var recentOCRBoxesOnly: Bool = false { didSet { if !isLoading { save() } } }
+    var debugMode: Bool = false { didSet { if !isLoading { save() } } }
+    var refreshOnNewSnapshot: Bool = true { didSet { if !isLoading { save() } } }
 
     // Storage & reduction settings
-    @Published var storageFormat: StorageFormat = SettingsStore.defaultStorageFormat { didSet { if !isLoading { save() } } }
-    @Published var maxLongEdge: Int = SettingsStore.defaultMaxLongEdge { didSet { if !isLoading { save() } } }            // 0 = original
-    @Published var lossyQuality: Double = SettingsStore.defaultLossyQuality { didSet { if !isLoading { save() } } }         // 0.1...1.0
-    @Published var dedupEnabled: Bool = SettingsStore.defaultDedupEnabled { didSet { if !isLoading { save() } } }
-    @Published var dedupHammingThreshold: Int = SettingsStore.defaultDedupHammingThreshold { didSet { if !isLoading { save() } } }     // 0..64
-    @Published var adaptiveSampling: Bool = SettingsStore.defaultAdaptiveSampling { didSet { if !isLoading { save() } } }
-    @Published var adaptiveMaxInterval: Double = SettingsStore.defaultAdaptiveMaxInterval { didSet { if !isLoading { save() } } }  // seconds
-    @Published var autoCompactEnabled: Bool = false { didSet { if !isLoading { save() } } }
-    @Published var degradeAfterDays: Int = SettingsStore.defaultDegradeAfterDays { didSet { if !isLoading { save() } } }
-    @Published var degradeMaxLongEdge: Int = SettingsStore.defaultDegradeMaxLongEdge { didSet { if !isLoading { save() } } }
-    @Published var degradeQuality: Double = SettingsStore.defaultDegradeQuality { didSet { if !isLoading { save() } } }
+    var storageFormat: StorageFormat = SettingsStore.defaultStorageFormat { didSet { if !isLoading { save() } } }
+    var maxLongEdge: Int = SettingsStore.defaultMaxLongEdge { didSet { if !isLoading { save() } } }            // 0 = original
+    var lossyQuality: Double = SettingsStore.defaultLossyQuality { didSet { if !isLoading { save() } } }         // 0.1...1.0
+    var dedupEnabled: Bool = SettingsStore.defaultDedupEnabled { didSet { if !isLoading { save() } } }
+    var dedupHammingThreshold: Int = SettingsStore.defaultDedupHammingThreshold { didSet { if !isLoading { save() } } }     // 0..64
+    var adaptiveSampling: Bool = SettingsStore.defaultAdaptiveSampling { didSet { if !isLoading { save() } } }
+    var adaptiveMaxInterval: Double = SettingsStore.defaultAdaptiveMaxInterval { didSet { if !isLoading { save() } } }  // seconds
+    var autoCompactEnabled: Bool = false { didSet { if !isLoading { save() } } }
+    var degradeAfterDays: Int = SettingsStore.defaultDegradeAfterDays { didSet { if !isLoading { save() } } }
+    var degradeMaxLongEdge: Int = SettingsStore.defaultDegradeMaxLongEdge { didSet { if !isLoading { save() } } }
+    var degradeQuality: Double = SettingsStore.defaultDegradeQuality { didSet { if !isLoading { save() } } }
     // Storage location (display only; bookmark lives in UserDefaults for background use)
-    @Published var storageFolderPath: String = StoragePaths.displayPath() { didSet { if !isLoading { save() } } }
+    var storageFolderPath: String = StoragePaths.displayPath() { didSet { if !isLoading { save() } } }
     // Backup (external) storage option and display path
-    @Published var backupEnabled: Bool = true { didSet { if !isLoading { save() } } }
-    @Published var backupFolderPath: String = StoragePaths.backupDisplayPath() { didSet { if !isLoading { save() } } }
+    var backupEnabled: Bool = true { didSet { if !isLoading { save() } } }
+    var backupFolderPath: String = StoragePaths.backupDisplayPath() { didSet { if !isLoading { save() } } }
     // Energy: keep captureScale
-    @Published var captureScale: Double = SettingsStore.defaultCaptureScale { didSet { if !isLoading { save() } } }  // 0.5...1.0
+    var captureScale: Double = SettingsStore.defaultCaptureScale { didSet { if !isLoading { save() } } }  // 0.5...1.0
     // Displays: capture first or all
-    @Published var captureDisplayMode: DisplayCaptureMode = .active { didSet { if !isLoading { save() } } }
+    var captureDisplayMode: DisplayCaptureMode = .active { didSet { if !isLoading { save() } } }
 
     // App behavior
-    @Published var startMinimized: Bool = false { didSet { if !isLoading { save() } } }
-    // When false, hide dock icon if there is no visible window
-    @Published var showDockIcon: Bool = true { didSet { if !isLoading { save() } } }
+    var startMinimized: Bool = false { didSet { if !isLoading { save() } } }
+    // When false, hide dock icon if there is no visible window (menu-bar-only mode)
+    var showDockIcon: Bool = false { didSet { if !isLoading { save() } } }
     // Auto-start capture when app launches
-    @Published var startRecordingOnStart: Bool = true { didSet { if !isLoading { save() } } }
-    @Published var onboardingCompleted: Bool = false { didSet { if !isLoading { save() } } }
+    var startRecordingOnStart: Bool = true { didSet { if !isLoading { save() } } }
+    var onboardingCompleted: Bool = false { didSet { if !isLoading { save() } } }
 
     // Search behavior
     // When enabled, search tolerates common OCR character confusions (e.g., i↔l↔1, o↔0, rn↔m).
-    @Published var intelligentAccuracy: Bool = true { didSet { if !isLoading { save() } } }
+    var intelligentAccuracy: Bool = true { didSet { if !isLoading { save() } } }
     // AI (embedding) search settings
-    @Published var aiEmbeddingsEnabled: Bool = false { didSet { if !isLoading { save() } } }
+    var aiEmbeddingsEnabled: Bool = false { didSet { if !isLoading { save() } } }
     // Remembers the toggle position in the search UI
-    @Published var aiModeOn: Bool = true { didSet { if !isLoading { save() } } }
+    var aiModeOn: Bool = true { didSet { if !isLoading { save() } } }
     // Similarity threshold (0..1)
-    @Published var aiThreshold: Double = 0.30 { didSet { if !isLoading { save() } } }
+    var aiThreshold: Double = 0.30 { didSet { if !isLoading { save() } } }
     // Max candidates scored per query (performance knob)
-    @Published var aiMaxCandidates: Int = 10000 { didSet { if !isLoading { save() } } }
+    var aiMaxCandidates: Int = 10000 { didSet { if !isLoading { save() } } }
     // Embedding provider selection
-    @Published var embeddingProvider: String = "apple-nl" { didSet { if !isLoading { save() } } }
+    var embeddingProvider: String = "apple-nl" { didSet { if !isLoading { save() } } }
     // When using providers that have multiple models (e.g. Ollama), the concrete model to use
-    @Published var embeddingModel: String = "snowflake-arctic-embed:33m" { didSet { if !isLoading { save() } } }
+    var embeddingModel: String = "snowflake-arctic-embed:33m" { didSet { if !isLoading { save() } } }
     // For multimodal/image-document models, optionally blend extracted text into the image embedding.
-    @Published var multimodalIncludeExtractedText: Bool = false { didSet { if !isLoading { save() } } }
+    var multimodalIncludeExtractedText: Bool = false { didSet { if !isLoading { save() } } }
 
     // Privacy
     // List of bundle identifiers whose windows should be excluded from capture when visible
-    @Published var blacklistBundleIds: [String] = [] { didSet { if !isLoading { save() } } }
+    var blacklistBundleIds: [String] = [] { didSet { if !isLoading { save() } } }
 
     // Updates
-    @Published var updateChannelBeta: Bool = false { didSet { if !isLoading { save() } } }
-    @Published var enableAutoCheckUpdates: Bool = true { didSet { if !isLoading { save() } } }
-    @Published var autoCheckIntervalHours: Int = 24 { didSet { if !isLoading { save() } } }
-    @Published var autoDownloadInstallUpdates: Bool = true { didSet { if !isLoading { save() } } }
+    var updateChannelBeta: Bool = false { didSet { if !isLoading { save() } } }
+    var enableAutoCheckUpdates: Bool = true { didSet { if !isLoading { save() } } }
+    var autoCheckIntervalHours: Int = 24 { didSet { if !isLoading { save() } } }
+    var autoDownloadInstallUpdates: Bool = true { didSet { if !isLoading { save() } } }
 
     // Security
-    @Published var vaultEnabled: Bool = false { didSet { if !isLoading { save() } } }
-    @Published var captureWhileLocked: Bool = true { didSet { if !isLoading { save() } } }
-    @Published var autoLockInactivityMinutes: Int = 0 { didSet { if !isLoading { save() } } }
-    @Published var autoLockOnSleep: Bool = false { didSet { if !isLoading { save() } } }
+    var vaultEnabled: Bool = false { didSet { if !isLoading { save() } } }
+    var captureWhileLocked: Bool = true { didSet { if !isLoading { save() } } }
+    var autoLockInactivityMinutes: Int = 0 { didSet { if !isLoading { save() } } }
+    var autoLockOnSleep: Bool = false { didSet { if !isLoading { save() } } }
 
-    private let defaults = UserDefaults.standard
+    @ObservationIgnored private let defaults = UserDefaults.standard
 
     private func load() {
         logContext("load")
@@ -331,6 +333,29 @@ final class SettingsStore: ObservableObject {
     // Explicitly persist current values. Useful when views close.
     func flush() {
         save()
+    }
+
+    // MARK: - Double accessors for Slider bindings
+    // These forward Int-backed integer properties as Double so Slider can bind directly.
+
+    var maxLongEdgeDouble: Double {
+        get { Double(maxLongEdge) }
+        set { maxLongEdge = Int(newValue) }
+    }
+
+    var dedupHammingThresholdDouble: Double {
+        get { Double(dedupHammingThreshold) }
+        set { dedupHammingThreshold = Int(newValue) }
+    }
+
+    var degradeMaxLongEdgeDouble: Double {
+        get { Double(degradeMaxLongEdge) }
+        set { degradeMaxLongEdge = Int(newValue) }
+    }
+
+    var autoCheckIntervalHoursDouble: Double {
+        get { Double(autoCheckIntervalHours) }
+        set { autoCheckIntervalHours = Int(newValue) }
     }
 
     private func logContext(_ phase: String) {

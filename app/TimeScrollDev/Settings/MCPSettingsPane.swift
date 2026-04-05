@@ -91,7 +91,7 @@ private struct MCPMigrationConfirmSheet: View {
                 Image(systemName: "externaldrive.fill.badge.checkmark").font(.system(size: 28))
                 Text("Migrate Data for MCP").font(.title3).bold()
             }
-            Text("Enabling MCP requires TimeScroll to perform a one-time data migration.")
+            Text("Enabling MCP requires Scrollback to perform a one-time data migration.")
                 .font(.headline)
             VStack(alignment: .leading, spacing: 8) {
                 Label("Snapshots, database, and vault files will be moved into a new folder.", systemImage: "arrow.right.doc.on.clipboard")
@@ -100,7 +100,7 @@ private struct MCPMigrationConfirmSheet: View {
             }
             Text("If you cancel, MCP will stay disabled and nothing will change.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .padding(.top, 4)
             HStack {
                 Spacer()

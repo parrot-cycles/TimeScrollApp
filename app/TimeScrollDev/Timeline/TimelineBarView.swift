@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 struct TimelineBar: NSViewRepresentable {
-    @ObservedObject var model: TimelineModel
+    var model: TimelineModel
     let isCompressed: Bool
     let onJump: (Int64) -> Void           // timeMs
     let onHover: (Int64) -> Void          // timeMs
@@ -28,7 +28,7 @@ struct TimelineBar: NSViewRepresentable {
 }
 
 struct TimelineBarContainer: NSViewRepresentable {
-    @ObservedObject var model: TimelineModel
+    var model: TimelineModel
     let isCompressed: Bool
     let invertScrollDirection: Bool
     let onJump: (Int64) -> Void
@@ -810,12 +810,14 @@ final class TimelineBarNSView: NSView {
     }
 }
 
-private class HoverPreviewViewModel: ObservableObject {
-    @Published var thumbnail: NSImage? = nil
-    @Published var appIcon: NSImage? = nil
-    @Published var appName: String = ""
-    @Published var date: Date = Date()
-    @Published var isLoading: Bool = true
+@MainActor
+@Observable
+private class HoverPreviewViewModel {
+    var thumbnail: NSImage? = nil
+    var appIcon: NSImage? = nil
+    var appName: String = ""
+    var date: Date = Date()
+    var isLoading: Bool = true
 
     func update(thumbnail: NSImage?, appIcon: NSImage?, appName: String, date: Date, isLoading: Bool) {
         withAnimation(.easeInOut(duration: 0.15)) {
@@ -842,32 +844,32 @@ private class HoverPreviewViewModel: ObservableObject {
 }
 
 private struct HoverPreviewView: View {
-    @ObservedObject var viewModel: HoverPreviewViewModel
+    var viewModel: HoverPreviewViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             ZStack {
                 Rectangle().fill(Color.secondary.opacity(0.15))
                     .frame(width: 240, height: 160)
-                    .cornerRadius(6)
+                    .clipShape(.rect(cornerRadius: 6))
 
                 if let img = viewModel.thumbnail {
                     Image(nsImage: img)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 240, maxHeight: 160)
-                        .cornerRadius(6)
+                        .clipShape(.rect(cornerRadius: 6))
                 } else if !viewModel.isLoading {
-                    Text("No preview").foregroundColor(.secondary)
+                    Text("No preview").foregroundStyle(.secondary)
                 }
             }
             HStack(spacing: 6) {
                 if let icon = viewModel.appIcon {
-                    Image(nsImage: icon).resizable().frame(width: 16, height: 16).cornerRadius(3)
+                    Image(nsImage: icon).resizable().frame(width: 16, height: 16).clipShape(.rect(cornerRadius: 3))
                 }
                 Text(viewModel.appName).font(.caption)
                 Spacer()
-                Text(Self.df.string(from: viewModel.date)).font(.caption2).foregroundColor(.secondary)
+                Text(Self.df.string(from: viewModel.date)).font(.caption2).foregroundStyle(.secondary)
             }
         }
         .padding(8)

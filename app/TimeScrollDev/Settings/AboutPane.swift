@@ -2,15 +2,16 @@ import SwiftUI
 import AppKit
 
 struct AboutPane: View {
-    @EnvironmentObject var settings: SettingsStore
+    @Environment(SettingsStore.self) private var settings
 
     var body: some View {
+        @Bindable var settings = settings
         SettingsPaneScrollView {
             aboutHeader
 
             SettingsSectionCard(title: "Support Development") {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("TimeScroll will stay free forever. If it has been useful, you can help support future work.")
+                    Text("Scrollback will stay free forever. If it has been useful, you can help support future work.")
                         .fixedSize(horizontal: false, vertical: true)
 
                     Link("Buy me a coffee on Ko-fi", destination: URL(string: "https://ko-fi.com/jmuzhen")!)
@@ -39,7 +40,7 @@ struct AboutPane: View {
                     .fontWeight(.semibold)
 
                 Text("Version \(appVersion)")
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
 
             Spacer(minLength: 0)
@@ -48,7 +49,7 @@ struct AboutPane: View {
     }
 
     private var appName: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "TimeScroll"
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "Scrollback"
     }
 
     private var appVersion: String {

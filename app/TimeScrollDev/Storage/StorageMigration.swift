@@ -48,18 +48,15 @@ final class StorageMigrationManager {
         // Move/copy data
         if moveExisting {
             onProgress?("Moving data…")
-            await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-                DispatchQueue.global(qos: .userInitiated).async {
-                    StoragePaths.withSecurityScope {
-                        do {
-                            try Self.transfer(from: oldRoot, to: newRoot)
-                        } catch {
-                            // Best-effort; continue
-                        }
+            await Task.detached(priority: .userInitiated) {
+                StoragePaths.withSecurityScope {
+                    do {
+                        try Self.transfer(from: oldRoot, to: newRoot)
+                    } catch {
+                        // Best-effort; continue
                     }
-                    cont.resume()
                 }
-            }
+            }.value
         }
 
         // Persist new location bookmark + display path
@@ -82,17 +79,14 @@ final class StorageMigrationManager {
         // Optionally delete old location (if it still exists)
         if deleteOld {
             onProgress?("Cleaning up old location…")
-            await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
-                DispatchQueue.global(qos: .utility).async {
-                    StoragePaths.withSecurityScope {
-                        let fm2 = FileManager.default
-                        if fm2.fileExists(atPath: oldRoot.path) {
-                            _ = try? fm2.removeItem(at: oldRoot)
-                        }
+            await Task.detached(priority: .utility) {
+                StoragePaths.withSecurityScope {
+                    let fm2 = FileManager.default
+                    if fm2.fileExists(atPath: oldRoot.path) {
+                        _ = try? fm2.removeItem(at: oldRoot)
                     }
-                    cont.resume()
                 }
-            }
+            }.value
         }
 
         if newAccessStarted { newRoot.stopAccessingSecurityScopedResource() }

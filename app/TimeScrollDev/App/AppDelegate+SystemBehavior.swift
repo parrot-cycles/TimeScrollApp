@@ -30,10 +30,8 @@ extension AppDelegate {
         }
         NotificationCenter.default.addObserver(forName: NSWindow.willCloseNotification, object: nil, queue: .main) { [weak self] _ in
             // Defer to ensure window list updates
-            DispatchQueue.main.async {
-                Task { @MainActor in
-                    self?.updateActivationPolicy()
-                }
+            Task { @MainActor in
+                self?.updateActivationPolicy()
             }
         }
         NotificationCenter.default.addObserver(forName: NSApplication.didHideNotification, object: nil, queue: .main) { [weak self] _ in

@@ -3,8 +3,8 @@ import AppKit
 
 @MainActor
 struct SecurityPane: View {
-    @ObservedObject var settings: SettingsStore
-    @ObservedObject var vault = VaultManager.shared
+    @Bindable var settings: SettingsStore
+    private let vault = VaultManager.shared
     @State private var showVaultOnboarding: Bool = false
     @State private var showVaultEntitlementWarning: Bool = false
     @State private var pendingEnableVault: Bool = false
@@ -47,7 +47,7 @@ struct SecurityPane: View {
                     HStack(spacing: 6) {
                         TextField("", value: $settings.autoLockInactivityMinutes, formatter: Self.intFormatter)
                             .frame(width: 70)
-                        Text("minutes").foregroundColor(.secondary)
+                        Text("minutes").foregroundStyle(.secondary)
                     }
                 }
             }
@@ -59,7 +59,7 @@ struct SecurityPane: View {
                         .disabled(!settings.vaultEnabled || !vault.isUnlocked)
                 }
                 if settings.vaultEnabled && vault.queuedCount > 0 {
-                    Text("Queued: \(vault.queuedCount)").font(.footnote).foregroundColor(.secondary)
+                    Text("Queued: \(vault.queuedCount)").font(.footnote).foregroundStyle(.secondary)
                 }
             }
         }
@@ -135,11 +135,11 @@ private struct VaultOnboardingSheet: View {
                 .font(.headline)
             VStack(alignment: .leading, spacing: 8) {
                 HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.yellow)
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow)
                     Text("This feature is in beta. Data may be lost, and there is no guarantee it is 100% secure. Keep backups if this data matters to you.")
                 }
                 HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "cpu.fill").foregroundColor(.secondary)
+                    Image(systemName: "cpu.fill").foregroundStyle(.secondary)
                     Text("Encryption will increase resource usage due to encryption/decryption during capture, thumbnailing, and viewing.")
                 }
                 HStack(alignment: .top, spacing: 8) {
@@ -169,7 +169,7 @@ private struct VaultDisableConfirmSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 28)).foregroundColor(.yellow)
+                Image(systemName: "exclamationmark.triangle").font(.system(size: 28)).foregroundStyle(.yellow)
                 Text("Turn Off Encryption?").font(.title3).bold()
             }
             Text("If you turn off encryption:")
@@ -178,7 +178,7 @@ private struct VaultDisableConfirmSheet: View {
                 Label("New snapshots will be saved unencrypted.", systemImage: "doc")
                 Label("Existing encrypted snapshots will remain encrypted on disk and will no longer be viewable. You can re‑enable encryption later to access those encrypted snapshots.", systemImage: "lock")
                 HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.yellow)
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.yellow)
                     Text("Data may be lost after disabling encryption. If the app breaks, please reset all data.")
                 }
             }
@@ -209,7 +209,7 @@ private struct EntitlementWarningSheet: View {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(.yellow)
+                    .foregroundStyle(.yellow)
                 Text(title).font(.title3).bold()
             }
             Text(lead)
@@ -218,7 +218,7 @@ private struct EntitlementWarningSheet: View {
                 ForEach(Array(bullets.enumerated()), id: \.offset) { _, item in
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "bolt.slash")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Text(item)
                     }
                 }

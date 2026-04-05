@@ -1,40 +1,58 @@
 import Foundation
 import SwiftUI
 import AppKit
+import Observation
 
 @MainActor
-final class TimelineModel: ObservableObject {
+@Observable
+final class TimelineModel {
     // Filters
-    @Published var query: String = ""
-    @Published var selectedAppBundleIds: Set<String> = []
-    @Published var startMs: Int64? = nil
-    @Published var endMs: Int64? = nil
+    var query: String = ""
+    var selectedAppBundleIds: Set<String> = []
+    var startMs: Int64? = nil
+    var endMs: Int64? = nil
 
     // Data
-    @Published private(set) var metas: [SnapshotMeta] = [] // DESC by time
-    @Published private(set) var segments: [TimelineSegment] = [] // chronological
-    @Published var selectedIndex: Int = -1
-    @Published var jumpToEndToken: Int = 0
+    private(set) var metas: [SnapshotMeta] = [] // DESC by time
+    private(set) var segments: [TimelineSegment] = [] // chronological
+    var selectedIndex: Int = -1
+    var jumpToEndToken: Int = 0
 
-    // Zoom + UI state
-    @AppStorage("ui.timeline.msPerPoint") var msPerPoint: Double = 60_000
-    @AppStorage("ui.actionPanelExpanded") var actionPanelExpanded: Bool = false
-    @AppStorage("ui.timeline.followLatest") var followLatest: Bool = false
-    @AppStorage("ui.overlay.offsetX") var overlayOffsetX: Double = 0
-    @AppStorage("ui.overlay.offsetY") var overlayOffsetY: Double = 220
+    // Zoom + UI state (persisted to UserDefaults)
+    var msPerPoint: Double = 60_000 {
+        didSet { UserDefaults.standard.set(msPerPoint, forKey: "ui.timeline.msPerPoint") }
+    }
+    var actionPanelExpanded: Bool = false {
+        didSet { UserDefaults.standard.set(actionPanelExpanded, forKey: "ui.actionPanelExpanded") }
+    }
+    var followLatest: Bool = false {
+        didSet { UserDefaults.standard.set(followLatest, forKey: "ui.timeline.followLatest") }
+    }
+    var overlayOffsetX: Double = 0 {
+        didSet { UserDefaults.standard.set(overlayOffsetX, forKey: "ui.overlay.offsetX") }
+    }
+    var overlayOffsetY: Double = 220 {
+        didSet { UserDefaults.standard.set(overlayOffsetY, forKey: "ui.overlay.offsetY") }
+    }
 
     // Hover state (for preview)
-    @Published var hoverTimeMs: Int64? = nil
+    var hoverTimeMs: Int64? = nil
     // Loading state for timeline fetch
-    @Published var isLoading: Bool = false
+    var isLoading: Bool = false
 
-    private var timesAsc: [Int64] = []
-    private var requestToken: Int = 0
+    @ObservationIgnored private var timesAsc: [Int64] = []
+    @ObservationIgnored private var requestToken: Int = 0
 
     var minTimeMs: Int64 { metas.last?.startedAtMs ?? 0 }
     var maxTimeMs: Int64 { metas.first?.startedAtMs ?? 0 }
 
     init() {
+        let d = UserDefaults.standard
+        // Restore persisted UI state
+        let storedMs = d.double(forKey: "ui.timeline.msPerPoint")
+        if storedMs > 0 { msPerPoint = storedMs }
+        actionPanelExpanded = d.bool(forKey: "ui.actionPanelExpanded")
+        followLatest = d.bool(forKey: "ui.timeline.followLatest")
         // Always start the session with the overlay in the default position.
         // Users can drag it during a session, but on new window/app launch it resets.
         overlayOffsetX = 0
@@ -59,7 +77,7 @@ final class TimelineModel: ObservableObject {
         let appIds = selectedAppBundleIds.isEmpty ? nil : Array(selectedAppBundleIds)
         let start = startMs
         let end = endMs
-        DispatchQueue.global(qos: .userInitiated).async { [limit, trimmed, appIds, start, end, useAI, fuzz, ia] in
+        Task.detached(priority: .userInitiated) { [limit, trimmed, appIds, start, end, useAI, fuzz, ia] in
             let searchSvc = SearchService()
             let list: [SnapshotMeta]
             if trimmed.isEmpty {
@@ -96,7 +114,7 @@ final class TimelineModel: ObservableObject {
             }
 
             let sorted = list.sorted { $0.startedAtMs > $1.startedAtMs }
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 guard let self = self else { return }
                 guard token == self.requestToken else { return }
                 self.metas = sorted
@@ -235,7 +253,7 @@ final class TimelineModel: ObservableObject {
         let token = requestToken
         isLoading = true
         let appIds = selectedAppBundleIds.isEmpty ? nil : Array(selectedAppBundleIds)
-        DispatchQueue.global(qos: .userInitiated).async { [spanMs, appIds] in
+        Task.detached(priority: .userInitiated) { [spanMs, appIds] in
             let anchorTime: Int64?
             if let anchorStartedAtMs {
                 anchorTime = anchorStartedAtMs
@@ -244,7 +262,7 @@ final class TimelineModel: ObservableObject {
             }
 
             guard let anchorTime else {
-                DispatchQueue.main.async { [weak self] in
+                await MainActor.run { [weak self] in
                     guard let self = self, token == self.requestToken else { return }
                     self.isLoading = false
                 }
@@ -259,7 +277,7 @@ final class TimelineModel: ObservableObject {
                                                    endMs: e)) ?? []
             let sorted = list.sorted { $0.startedAtMs > $1.startedAtMs }
 
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 guard let self = self else { return }
                 guard token == self.requestToken else { return }
                 self.metas = sorted
@@ -281,7 +299,7 @@ final class TimelineModel: ObservableObject {
         let token = requestToken
         isLoading = true
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let deletionSucceeded: Bool
             do {
                 try DB.shared.deleteSnapshot(id: id)
@@ -290,7 +308,7 @@ final class TimelineModel: ObservableObject {
                 deletionSucceeded = false
             }
 
-            DispatchQueue.main.async { [weak self] in
+            await MainActor.run { [weak self] in
                 guard let self = self else { return }
                 guard token == self.requestToken else { return }
                 self.isLoading = false

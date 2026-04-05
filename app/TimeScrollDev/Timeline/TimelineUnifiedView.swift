@@ -2,10 +2,10 @@ import SwiftUI
 import AppKit
 
 struct TimelineUnifiedView: View {
-    @ObservedObject var appState = AppState.shared
-    @StateObject var model = TimelineModel()
-    @EnvironmentObject var settings: SettingsStore
-    @ObservedObject var vault = VaultManager.shared
+    private let appState = AppState.shared
+    @State private var model = TimelineModel()
+    @Environment(SettingsStore.self) private var settings
+    private let vault = VaultManager.shared
     @AppStorage("ui.timeline.compressed") private var compressedTimeline: Bool = true
     @AppStorage("ui.timeline.invertScrollDirection") private var invertTimelineScrollDirection: Bool = false
 
@@ -36,6 +36,7 @@ struct TimelineUnifiedView: View {
     }
 
     var body: some View {
+        @Bindable var model = model
         VStack(spacing: 0) {
             topBar
             Divider()
@@ -54,18 +55,18 @@ struct TimelineUnifiedView: View {
             model.msPerPoint = min(max(model.msPerPoint, minMsPerPt), maxMsPerPt)
         }
         .onDisappear { removeKeyMonitor() }
-        .onChange(of: vault.isUnlocked) { unlocked in
+        .onChange(of: vault.isUnlocked) { _, unlocked in
             // When the vault gets unlocked, reload timeline and show a loading state
             if unlocked { model.load() }
         }
-        .onChange(of: appState.lastSnapshotURL) { _ in
+        .onChange(of: appState.lastSnapshotURL) {
             if SettingsStore.shared.refreshOnNewSnapshot { reloadTimelineKeepingSelection() }
         }
-        .onChange(of: appState.lastSnapshotTick) { _ in
+        .onChange(of: appState.lastSnapshotTick) {
             if SettingsStore.shared.refreshOnNewSnapshot { reloadTimelineKeepingSelection() }
         }
         // If the user clears the search field, automatically return to timeline
-        .onChange(of: query) { newVal in
+        .onChange(of: query) { _, newVal in
             let trimmed = newVal.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty && showingResults {
                 // Clear applied query on the model and reload latest
@@ -76,7 +77,7 @@ struct TimelineUnifiedView: View {
             }
         }
         // Keep text field reflecting the currently applied model query (e.g. after programmatic changes)
-        .onChange(of: model.query) { newVal in
+        .onChange(of: model.query) { _, newVal in
             if query != newVal { query = newVal }
         }
         .frame(minWidth: 1000, minHeight: 700)
@@ -115,8 +116,9 @@ struct TimelineUnifiedView: View {
                     .font(.title2)
             }
             .buttonStyle(.plain)
-            .foregroundColor(appState.isCapturing ? .red : .accentColor)
+            .foregroundStyle(appState.isCapturing ? Color.red : Color.accentColor)
             .help(appState.isCapturing ? "Stop Capture" : "Start Capture")
+            .accessibilityLabel(appState.isCapturing ? "Stop capture" : "Start capture")
 
             // Back to results button (when viewing a snapshot from search)
             if cameFromResults && !showingResults {
@@ -129,6 +131,7 @@ struct TimelineUnifiedView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Back to results")
+                .accessibilityLabel("Back to results")
             }
 
             // Search field
@@ -155,6 +158,7 @@ struct TimelineUnifiedView: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityLabel("Clear search")
                 }
             }
             .frame(maxWidth: .infinity)
@@ -174,6 +178,7 @@ struct TimelineUnifiedView: View {
             }
             .buttonStyle(.plain)
             .help("Filters")
+            .accessibilityLabel("Filters")
             .popover(isPresented: $showFilters, arrowEdge: .bottom) {
                 filtersPopover
                     .padding(12)
@@ -195,6 +200,7 @@ struct TimelineUnifiedView: View {
                 }
                 .buttonStyle(.plain)
                 .help(vault.isUnlocked ? "Lock Vault" : "Unlock Vault")
+                .accessibilityLabel(vault.isUnlocked ? "Lock vault" : "Unlock vault")
 
                 if vault.queuedCount > 0 {
                     Text("\(vault.queuedCount)")
@@ -211,14 +217,15 @@ struct TimelineUnifiedView: View {
                     Image(systemName: "minus")
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Zoom out timeline")
 
-                Slider(value: Binding(get: {
+                Slider(value: Binding<Double>(get: {
                     let clamped = min(max(model.msPerPoint, minMsPerPt), maxMsPerPt)
                     let logMin = log(minMsPerPt)
                     let logMax = log(maxMsPerPt)
                     let logVal = log(clamped)
                     return (logMax - logVal) / (logMax - logMin)
-                }, set: { value in
+                }, set: { (value: Double) in
                     let logMin = log(minMsPerPt)
                     let logMax = log(maxMsPerPt)
                     let logVal = logMax - value * (logMax - logMin)
@@ -231,6 +238,7 @@ struct TimelineUnifiedView: View {
                     Image(systemName: "plus")
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Zoom in timeline")
             }
 
             // Live toggle
@@ -239,7 +247,7 @@ struct TimelineUnifiedView: View {
             } label: {
                 Image(systemName: "dot.radiowaves.left.and.right")
                     .font(.title3)
-                    .foregroundColor(model.followLatest ? .accentColor : .secondary)
+                    .foregroundStyle(model.followLatest ? Color.accentColor : Color.secondary)
             }
             .buttonStyle(.plain)
             .help("Follow newest snapshots")
@@ -251,6 +259,7 @@ struct TimelineUnifiedView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Debug DB")
+                .accessibilityLabel("Debug database")
             }
         }
         .padding(.horizontal, 10)
@@ -401,7 +410,7 @@ struct TimelineUnifiedView: View {
                                       })
                         // Remount the results view when filters change to avoid stale local state
                         .id("\(model.query)|\(((model.selectedAppBundleIds.isEmpty ? ["_"] : Array(model.selectedAppBundleIds)).sorted().joined(separator: ",")))|\(model.startMs ?? -1)|\(model.endMs ?? -1)")
-                        .environmentObject(settings)
+                        .environment(settings)
                 } else {
                     SnapshotStageView(model: model, globalQuery: model.query)
                 }
@@ -415,12 +424,11 @@ struct TimelineUnifiedView: View {
                         .progressViewStyle(.circular)
                     Text("Loading snapshots\nPlease wait…")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .padding(16)
-                .background(.ultraThinMaterial)
-                .cornerRadius(10)
+                .background(.ultraThinMaterial, in: .rect(cornerRadius: 10))
             }
         }
         .frame(minHeight: 480)
@@ -445,6 +453,8 @@ struct TimelineUnifiedView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(8)
+                .help("Jump to latest")
+                .accessibilityLabel("Jump to latest snapshot")
             }
         }
     }
@@ -461,6 +471,7 @@ struct TimelineUnifiedView: View {
             }
             .buttonStyle(.bordered)
             .help("Previous day")
+            .accessibilityLabel("Previous day")
 
             // Previous snapshot
             Button { model.prev() } label: {
@@ -470,6 +481,7 @@ struct TimelineUnifiedView: View {
             }
             .buttonStyle(.bordered)
             .disabled(!(model.selectedIndex + 1 < model.metas.count))
+            .accessibilityLabel("Previous snapshot")
 
             // Date button → calendar popover
             Button {
@@ -495,7 +507,7 @@ struct TimelineUnifiedView: View {
                     }
                 )
                 .frame(width: 300)
-                .onChange(of: calendarDate) { _ in
+                .onChange(of: calendarDate) {
                     loadCalendarDays()
                 }
             }
@@ -508,6 +520,7 @@ struct TimelineUnifiedView: View {
             }
             .buttonStyle(.bordered)
             .disabled(!(model.selectedIndex - 1 >= 0))
+            .accessibilityLabel("Next snapshot")
 
             // Next day
             Button { jumpCalendarDay(by: 1) } label: {
@@ -517,12 +530,13 @@ struct TimelineUnifiedView: View {
             }
             .buttonStyle(.bordered)
             .help("Next day")
+            .accessibilityLabel("Next day")
 
             Spacer()
         }
         .padding(.vertical, 6)
         .onAppear { syncCalendarToSelection() }
-        .onChange(of: model.selected?.id) { _ in syncCalendarToSelection() }
+        .onChange(of: model.selected?.id) { syncCalendarToSelection() }
     }
 
     private var calendarDateString: String {
@@ -568,9 +582,9 @@ struct TimelineUnifiedView: View {
         let cal = Calendar.current
         let year = cal.component(.year, from: calendarDate)
         let month = cal.component(.month, from: calendarDate)
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let days = (try? DB.shared.daysWithSnapshots(year: year, month: month)) ?? []
-            DispatchQueue.main.async {
+            await MainActor.run {
                 calendarDaysWithContent = days
             }
         }
@@ -755,7 +769,7 @@ private struct TimelineAppMultiFilter: View {
                         .controlSize(.small)
                     Text("Loading apps…")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
             ScrollView {
@@ -790,9 +804,9 @@ private struct TimelineAppMultiFilter: View {
         let token = loadToken
         isLoadingApps = true
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let list = (try? DB.shared.distinctApps()) ?? []
-            DispatchQueue.main.async {
+            await MainActor.run {
                 guard token == loadToken else { return }
                 apps = list
                 isLoadingApps = false

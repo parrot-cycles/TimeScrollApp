@@ -8,7 +8,7 @@ extension AppDelegate {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let btn = item.button {
             // Initial icon - will be updated by updateStatusItemIcon() when capture state is known
-            let symbol = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "TimeScroll")
+            let symbol = NSImage(systemSymbolName: "camera.aperture", accessibilityDescription: "Scrollback")
             if let img = symbol {
                 img.isTemplate = true
                 btn.image = img
@@ -41,7 +41,7 @@ extension AppDelegate {
         menu.addItem(.separator())
 
         // Open App window
-        let open = NSMenuItem(title: "Open TimeScroll", action: #selector(openMainWindow), keyEquivalent: "")
+        let open = NSMenuItem(title: "Open Scrollback", action: #selector(openMainWindow), keyEquivalent: "")
         open.target = self
         menu.addItem(open)
 
@@ -77,7 +77,7 @@ extension AppDelegate {
         menu.addItem(.separator())
 
         // Quit
-        let quit = NSMenuItem(title: "Quit TimeScroll", action: #selector(quitApp), keyEquivalent: "q")
+        let quit = NSMenuItem(title: "Quit Scrollback", action: #selector(quitApp), keyEquivalent: "q")
         quit.target = self
         menu.addItem(quit)
 
@@ -134,7 +134,7 @@ extension AppDelegate {
         guard let btn = statusItem?.button else { return }
         let isCapturing = AppState.shared.isCapturing
         let symbolName = isCapturing ? "record.circle.fill" : "camera.aperture"
-        let symbol = NSImage(systemSymbolName: symbolName, accessibilityDescription: "TimeScroll")
+        let symbol = NSImage(systemSymbolName: symbolName, accessibilityDescription: "Scrollback")
         if let img = symbol {
             img.isTemplate = true
             btn.image = img

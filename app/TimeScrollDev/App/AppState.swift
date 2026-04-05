@@ -1,16 +1,17 @@
 import Foundation
-import Combine
+import Observation
 
 @MainActor
-final class AppState: ObservableObject {
+@Observable
+final class AppState {
     static let shared = AppState()
-    @Published var isCapturing: Bool = false
-    @Published var lastSnapshotURL: URL?
+    var isCapturing: Bool = false
+    var lastSnapshotURL: URL?
     // Always increments for every snapshot row inserted so SwiftUI can react
-    @Published var lastSnapshotTick: Int = 0
+    var lastSnapshotTick: Int = 0
 
-    let snapshotStore = SnapshotStore.shared
-    lazy var captureManager: CaptureManager = {
+    @ObservationIgnored let snapshotStore = SnapshotStore.shared
+    @ObservationIgnored lazy var captureManager: CaptureManager = {
         let manager = CaptureManager { [weak self] url in
             Task { @MainActor in
                 if !VaultManager.shared.isVaultEnabled || VaultManager.shared.isUnlocked {

@@ -9,7 +9,7 @@ struct SearchResultsView: View {
     let onOpen: (SearchResult, Int) -> Void
     let onClose: () -> Void
 
-    @EnvironmentObject var settings: SettingsStore
+    @Environment(SettingsStore.self) private var settings
     @State private var page: Int = 0
     @State private var rows: [SearchResultDisplayRow] = []
     @State private var isLoading: Bool = false
@@ -46,10 +46,10 @@ struct SearchResultsView: View {
             loadPage(0)
             loadTotalCount()
         }
-        .onChange(of: query) { _ in resetAndReload() }
-        .onChange(of: appBundleIds) { _ in resetAndReload() }
-        .onChange(of: startMs) { _ in resetAndReload() }
-        .onChange(of: endMs) { _ in resetAndReload() }
+        .onChange(of: query) { resetAndReload() }
+        .onChange(of: appBundleIds) { resetAndReload() }
+        .onChange(of: startMs) { resetAndReload() }
+        .onChange(of: endMs) { resetAndReload() }
     }
 
     private var header: some View {
@@ -83,22 +83,22 @@ struct SearchResultsView: View {
             Spacer(minLength: 16)
 
             HStack(spacing: 10) {
-                Picker("View", selection: Binding(get: { viewMode }, set: { mode in
-                    viewMode = mode
-                    UserDefaults.standard.set(mode.rawValue, forKey: "settings.searchViewMode")
-                })) {
+                Picker("View", selection: $viewMode) {
                     Text("List").tag(ViewMode.list)
                     Text("Tiles").tag(ViewMode.tiles)
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 130)
+                .onChange(of: viewMode) { _, mode in
+                    UserDefaults.standard.set(mode.rawValue, forKey: "settings.searchViewMode")
+                }
 
-                Toggle("AI", isOn: Binding(get: { useAI }, set: { enabled in
-                    useAI = enabled
+                Toggle("AI", isOn: $useAI)
+                .toggleStyle(.switch)
+                .onChange(of: useAI) { _, enabled in
                     UserDefaults.standard.set(enabled, forKey: "settings.aiModeOn")
                     resetAndReload()
-                }))
-                .toggleStyle(.switch)
+                }
                 .disabled(!settings.aiEmbeddingsEnabled || EmbeddingService.shared.dim == 0)
                 .help((settings.aiEmbeddingsEnabled && EmbeddingService.shared.dim > 0) ? "Use local embeddings for relevance" : "Enable AI search in Preferences first")
 
@@ -165,7 +165,7 @@ struct SearchResultsView: View {
                         .progressViewStyle(.circular)
                     Text("Loading results…")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal, 18)
                 .padding(.vertical, 16)
@@ -228,9 +228,9 @@ struct SearchResultsView: View {
         let start = startMs
         let end = endMs
         let svc = search
-        DispatchQueue.global(qos: .utility).async {
+        Task.detached(priority: .utility) {
             let count = svc.searchCount(for: trimmed, fuzziness: fuzz, intelligentAccuracy: ia, appBundleIds: apps, startMs: start, endMs: end)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 totalCount = count
             }
         }
@@ -252,7 +252,7 @@ struct SearchResultsView: View {
         let end = endMs
         let searchSvc = search
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let fetched: [SearchResult]
             var method: SearchMethod = .none
             if trimmed.isEmpty {
@@ -294,17 +294,18 @@ struct SearchResultsView: View {
                                                       offset: offset)
                 method = .fts
             }
-            let preparedRows = Array(fetched.prefix(self.pageSize)).map {
+            let pageSize = self.pageSize
+            let preparedRows = Array(fetched.prefix(pageSize)).map {
                 SearchResultDisplayRow(result: $0, query: trimmed, intelligentAccuracy: ia)
             }
-            DispatchQueue.main.async {
+            await MainActor.run {
                 guard token == requestToken else { return }
                 if p > 0 && fetched.isEmpty {
                     self.hasNext = false
                     self.isLoading = false
                     return
                 }
-                self.hasNext = fetched.count > self.pageSize
+                self.hasNext = fetched.count > pageSize
                 self.rows = preparedRows
                 self.page = p
                 self.searchMethod = method
@@ -509,7 +510,7 @@ private struct SearchRowView: View {
                     Spacer(minLength: 8)
                     Text(dateString(ms: row.result.startedAtMs))
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
 
                 snippet
@@ -557,7 +558,7 @@ private struct SearchRowView: View {
         if let attributed = row.snippet {
             return Text(attributed)
         }
-        return Text(row.fallbackSnippet).foregroundColor(.secondary)
+        return Text(row.fallbackSnippet).foregroundStyle(.secondary)
     }
 
     private func dateString(ms: Int64) -> String {
@@ -716,7 +717,7 @@ private struct SearchResultThumbnailView: View {
 
         func assign(_ image: NSImage?) {
             guard let image else { return }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 loadedThumb = image
             }
         }

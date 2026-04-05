@@ -3,7 +3,7 @@ import AppKit
 
 @MainActor
 struct StoragePane: View {
-    @ObservedObject var settings: SettingsStore
+    @Bindable var settings: SettingsStore
     @State private var showResetConfirm = false
     @State private var showChangeSheet = false
     @State private var pendingFolder: URL?
@@ -38,7 +38,7 @@ struct StoragePane: View {
                     HStack(spacing: 8) {
                         ProgressView()
                         Text(progress.isEmpty ? "Applying storage changes…" : progress)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -83,7 +83,7 @@ struct StoragePane: View {
 
                 LabeledContent("Max long edge") {
                     HStack {
-                        Slider(value: Binding(get: { Double(settings.maxLongEdge) }, set: { settings.maxLongEdge = Int($0) }), in: 0...3000, step: 100)
+                        Slider(value: $settings.maxLongEdgeDouble, in: 0...3000, step: 100)
                         Text(settings.maxLongEdge == 0 ? "Original" : "\(settings.maxLongEdge) px")
                             .monospacedDigit()
                             .frame(width: 82, alignment: .trailing)
@@ -114,7 +114,7 @@ struct StoragePane: View {
                         LabeledContent("Dedup sensitivity") {
                             HStack {
                                 Slider(
-                                    value: Binding(get: { Double(settings.dedupHammingThreshold) }, set: { settings.dedupHammingThreshold = Int($0) }),
+                                    value: $settings.dedupHammingThresholdDouble,
                                     in: 0...16,
                                     step: 1
                                 )
@@ -144,14 +144,14 @@ struct StoragePane: View {
             Section {
                 Toggle("Keep highlight boxes only for recent snapshots", isOn: $settings.recentOCRBoxesOnly)
                     .help("Older highlight boxes are pruned after the aging window to save database space.")
-                    .onChange(of: settings.recentOCRBoxesOnly) { enabled in
+                    .onChange(of: settings.recentOCRBoxesOnly) { _, enabled in
                         guard enabled else { return }
                         triggerOCRBoxPrune()
                     }
 
                 Toggle("Auto-compact older snapshots", isOn: $settings.autoCompactEnabled)
                     .help("Automatically rewrites older snapshots using the settings below.")
-                    .onChange(of: settings.autoCompactEnabled) { enabled in
+                    .onChange(of: settings.autoCompactEnabled) { _, enabled in
                         guard enabled else { return }
                         triggerStorageMaintenance()
                     }
@@ -164,13 +164,13 @@ struct StoragePane: View {
                                     TextField("", value: $settings.degradeAfterDays, formatter: Self.intFormatter)
                                         .frame(width: 70)
                                     Text("days")
-                                        .foregroundColor(.secondary)
+                                        .foregroundStyle(.secondary)
                                 }
                             }
 
                             LabeledContent("Degrade size") {
                                 HStack {
-                                    Slider(value: Binding(get: { Double(settings.degradeMaxLongEdge) }, set: { settings.degradeMaxLongEdge = Int($0) }), in: 600...2000, step: 100)
+                                    Slider(value: $settings.degradeMaxLongEdgeDouble, in: 600...2000, step: 100)
                                     Text("\(settings.degradeMaxLongEdge) px")
                                         .monospacedDigit()
                                         .frame(width: 64, alignment: .trailing)
@@ -199,7 +199,7 @@ struct StoragePane: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Permanently delete all app data, including the database, snapshots, backups, and settings.")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Button(role: .destructive) {
                         showResetConfirm = true
                     } label: {
@@ -265,7 +265,7 @@ private struct DataResetConfirmSheet: View {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle")
                     .font(.system(size: 28))
-                    .foregroundColor(.yellow)
+                    .foregroundStyle(.yellow)
                 Text("Delete All Data?")
                     .font(.title3)
                     .bold()
@@ -279,7 +279,7 @@ private struct DataResetConfirmSheet: View {
             }
             Text("The app will quit afterwards. This cannot be undone.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .padding(.top, 4)
             HStack {
                 Spacer()
@@ -295,13 +295,13 @@ private struct DataResetConfirmSheet: View {
 
 private extension StoragePane {
     func triggerOCRBoxPrune() {
-        DispatchQueue.global(qos: .utility).async {
+        Task.detached(priority: .utility) {
             DB.shared.pruneOldOCRBoxesIfConfigured(force: true)
         }
     }
 
     func triggerStorageMaintenance() {
-        DispatchQueue.global(qos: .utility).async {
+        Task.detached(priority: .utility) {
             StorageMaintenanceManager.shared.runIfNeeded(forceMaintenance: true)
         }
     }
@@ -368,7 +368,7 @@ private struct StorageLocationChangeSheet: View {
                     .lineLimit(2)
                     .truncationMode(.middle)
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
             Toggle("Move existing data to the new folder", isOn: $moveExisting)
                 .toggleStyle(.checkbox)

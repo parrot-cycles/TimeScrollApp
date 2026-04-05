@@ -98,9 +98,9 @@ struct StatsView: View {
     let window = windows[windowIndex]
     let currentDBBytes = dbBytes
 
-    DispatchQueue.global(qos: .userInitiated).async {
+    Task.detached(priority: .userInitiated) {
       let stats = Self.computeStats(for: window, includeDiskUsage: fullDisk, fallbackDBBytes: currentDBBytes)
-      DispatchQueue.main.async {
+      await MainActor.run {
         guard token == statsRefreshToken, selectedWindowIndex == windowIndex else { return }
         snapshotCount = stats.snapshotCount
         storageBytes = stats.storageBytes
@@ -118,16 +118,16 @@ struct StatsView: View {
     let windowIndex = selectedWindowIndex
     let window = windows[windowIndex]
 
-    DispatchQueue.global(qos: .utility).async {
+    Task.detached(priority: .utility) {
       let updatedUsage = Self.computeUsageSeconds(for: window, now: Date().timeIntervalSince1970)
-      DispatchQueue.main.async {
+      await MainActor.run {
         guard token == usageRefreshToken, selectedWindowIndex == windowIndex else { return }
         usageSeconds = updatedUsage
       }
     }
   }
 
-  private static func computeStats(
+  nonisolated private static func computeStats(
     for window: (label: String, seconds: TimeInterval?),
     includeDiskUsage: Bool,
     fallbackDBBytes: Int64
@@ -164,14 +164,14 @@ struct StatsView: View {
     )
   }
 
-  private static func computeUsageSeconds(for window: (label: String, seconds: TimeInterval?), now: TimeInterval) -> TimeInterval {
+  nonisolated private static func computeUsageSeconds(for window: (label: String, seconds: TimeInterval?), now: TimeInterval) -> TimeInterval {
     if let secs = window.seconds {
       return (try? DB.shared.usageSecondsSince(cutoff: now - secs, now: now)) ?? 0
     }
     return (try? DB.shared.totalUsageSeconds(now: now)) ?? 0
   }
 
-  private static func computeDBSize() -> Int64 {
+  nonisolated private static func computeDBSize() -> Int64 {
     let dbURL = StoragePaths.dbURL()
     let base = dbURL.deletingPathExtension()
     let urls = [

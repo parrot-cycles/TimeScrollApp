@@ -20,14 +20,15 @@ enum DataReset {
             try? fm.removeItem(at: defaultDir)
         }
         // Remove preferences
-        let bundleId = Bundle.main.bundleIdentifier ?? "com.muzhen.TimeScroll"
+        let bundleId = Bundle.main.bundleIdentifier ?? "com.parrotcycles.scrollback"
         let prefs = appSupport.deletingLastPathComponent().appendingPathComponent("Preferences/\(bundleId).plist")
         if fm.fileExists(atPath: prefs.path) {
             try? fm.removeItem(at: prefs)
         }
         // Clear NSCache-backed thumbnails implicitly by process lifetime; force quit recommended
         // Notify and quit to ensure clean state
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(100))
             NSApp.terminate(nil)
         }
     }

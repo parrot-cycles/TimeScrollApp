@@ -7,11 +7,11 @@ final class KeyStore {
     static let shared = KeyStore()
     private init() {}
 
-    private let kekTag = "com.muzhen.TimeScroll.kek".data(using: .utf8)!
+    private let kekTag = "com.parrotcycles.scrollback.kek".data(using: .utf8)!
     // Shared Keychain Access Group suffix (without the AppIdentifierPrefix).
     // This must match the "keychain-access-groups" entitlement present in both
     // the main app and the `timescroll-mcp` helper targets.
-    private let accessGroupSuffix = "com.muzhen.TimeScroll.shared"
+    private let accessGroupSuffix = "com.parrotcycles.scrollback.shared"
 
     // Resolve fully-qualified access groups we can use by reading entitlements at runtime
     // (ensures the TeamID/AppIdentifierPrefix is included correctly). We prioritize the
@@ -159,13 +159,13 @@ final class KeyStore {
         try ensureKEK()
         // Evaluate LA to ensure we can use the key without extra prompts for a short session
         let ctx = LAContext()
-        ctx.localizedReason = "Unlock TimeScroll Vault"
+        ctx.localizedReason = "Unlock Scrollback Vault"
         var authError: NSError?
         if !ctx.canEvaluatePolicy(.deviceOwnerAuthentication, error: &authError) {
             throw authError ?? NSError(domain: "TS.Key", code: -3)
         }
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
-            ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Unlock TimeScroll Vault") { ok, err in
+            ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Unlock Scrollback Vault") { ok, err in
                 if ok { cont.resume() } else { cont.resume(throwing: err ?? NSError(domain: "TS.Key", code: -4)) }
             }
         }
@@ -177,14 +177,14 @@ final class KeyStore {
     func authenticateAndUnwrapDbKey(presentingWindow: NSWindow? = nil) async throws -> Data {
         try ensureKEK()
         let ctx = LAContext()
-        ctx.localizedReason = "Unlock TimeScroll Vault"
+        ctx.localizedReason = "Unlock Scrollback Vault"
         var authError: NSError?
         if !ctx.canEvaluatePolicy(.deviceOwnerAuthentication, error: &authError) {
             fputs("[KeyStore] canEvaluatePolicy failed: \(authError?.localizedDescription ?? "unknown")\n", stderr)
             throw authError ?? NSError(domain: "TS.Key", code: -3)
         }
         try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
-            ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Unlock TimeScroll Vault") { ok, err in
+            ctx.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "Unlock Scrollback Vault") { ok, err in
                 if ok {
                     fputs("[KeyStore] evaluatePolicy success\n", stderr)
                     cont.resume()

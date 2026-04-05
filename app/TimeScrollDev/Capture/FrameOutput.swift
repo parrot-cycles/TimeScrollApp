@@ -189,7 +189,7 @@ final class FrameOutput: NSObject, SCStreamOutput {
                     )
 
                     // Notify UI before OCR to avoid races
-                    DispatchQueue.main.async { self.onSnapshot(url) }
+                    Task { @MainActor in self.onSnapshot(url) }
 
                     // Reset adaptive state after a real persist
                     self.lastHash = hashVal

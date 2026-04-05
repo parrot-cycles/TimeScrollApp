@@ -7,7 +7,7 @@ struct MCPMain {
 		fputs("[timescroll-mcp] starting\n", stderr)
 		MCPFileLogger.log("helper starting")
 		let server = MCPServer()
-		DispatchQueue.global(qos: .userInitiated).async {
+		Task.detached(priority: .userInitiated) {
 			server.run()
 		}
 		// Keep main thread free for MainActor work (SearchService, etc.)

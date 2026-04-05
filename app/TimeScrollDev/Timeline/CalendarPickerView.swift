@@ -30,6 +30,8 @@ struct CalendarPickerView: View {
                         Image(systemName: "chevron.left")
                     }
                     .buttonStyle(.bordered)
+                    .help("Previous month")
+                    .accessibilityLabel("Previous month")
 
                     Button {
                         displayedMonth = Date()
@@ -41,11 +43,14 @@ struct CalendarPickerView: View {
                     }
                     .buttonStyle(.bordered)
                     .help("Today")
+                    .accessibilityLabel("Today")
 
                     Button { changeMonth(by: 1) } label: {
                         Image(systemName: "chevron.right")
                     }
                     .buttonStyle(.bordered)
+                    .help("Next month")
+                    .accessibilityLabel("Next month")
                 }
             }
 
@@ -54,7 +59,7 @@ struct CalendarPickerView: View {
                 ForEach(weekdaySymbols, id: \.self) { sym in
                     Text(sym)
                         .font(.caption.weight(.semibold))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -90,11 +95,11 @@ struct CalendarPickerView: View {
                     .frame(width: 8, height: 8)
                 Text("Days with red color have content on them")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(12)
-        .onChange(of: selectedDate) { newDate in
+        .onChange(of: selectedDate) { _, newDate in
             // Keep displayed month in sync when date changes externally
             if !calendar.isDate(newDate, equalTo: displayedMonth, toGranularity: .month) {
                 displayedMonth = newDate
@@ -104,10 +109,14 @@ struct CalendarPickerView: View {
 
     // MARK: - Helpers
 
+    private static let monthYearFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM yyyy"
+        return f
+    }()
+
     private var monthYearString: String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "MMMM yyyy"
-        return fmt.string(from: displayedMonth)
+        Self.monthYearFormatter.string(from: displayedMonth)
     }
 
     private func changeMonth(by offset: Int) {
@@ -198,7 +207,7 @@ private struct DayCell: View {
 
             Text("\(day)")
                 .font(.system(.body, design: .rounded).weight(isToday ? .bold : .regular))
-                .foregroundColor(textColor)
+                .foregroundStyle(textColor)
                 .frame(width: 32, height: 32)
 
             if isToday && !isSelected {

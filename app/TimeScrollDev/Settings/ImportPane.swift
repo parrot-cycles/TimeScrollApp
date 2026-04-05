@@ -3,7 +3,7 @@ import AppKit
 
 @MainActor
 struct ImportPane: View {
-    @StateObject private var importer = ScreenMemoryImporter()
+    @State private var importer = ScreenMemoryImporter()
     @State private var folderPath: String = {
         let defaultPath = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("ScreenMemoryData").path
@@ -35,7 +35,7 @@ struct ImportPane: View {
                             .lineLimit(2)
                             .truncationMode(.middle)
                             .textSelection(.enabled)
-                            .foregroundColor(folderPath.isEmpty ? .secondary : .primary)
+                            .foregroundStyle(folderPath.isEmpty ? .secondary : .primary)
 
                         Spacer()
 
@@ -47,11 +47,11 @@ struct ImportPane: View {
                     if !folderPath.isEmpty {
                         if isValidFolder {
                             Label("Valid ScreenMemory data folder", systemImage: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                                .foregroundStyle(.green)
                                 .font(.caption)
                         } else {
                             Label("Missing text.sqlite, usage.sqlite, or screenshots/", systemImage: "xmark.circle.fill")
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                                 .font(.caption)
                         }
                     }
@@ -73,10 +73,10 @@ struct ImportPane: View {
                 case .failed(let msg):
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Import failed", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         Text(msg)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                         Button("Reset") { importer.state = .idle }
                     }
                 }
@@ -88,7 +88,7 @@ struct ImportPane: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Test copies 5 samples. Copy keeps originals (for external drives). Move saves space.")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
 
             HStack(spacing: 12) {
                 Button("Test (5)") {
@@ -122,7 +122,7 @@ struct ImportPane: View {
 
             Text(importer.progress)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
 
             Button("Cancel") {
                 importer.cancel()
@@ -133,17 +133,17 @@ struct ImportPane: View {
     private func doneView(imported: Int, skipped: Int, errors: Int) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Import complete", systemImage: "checkmark.circle.fill")
-                .foregroundColor(.green)
+                .foregroundStyle(.green)
 
             HStack(spacing: 16) {
                 Label("\(imported) imported", systemImage: "photo")
                 if skipped > 0 {
                     Label("\(skipped) skipped", systemImage: "arrow.right.arrow.left")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 if errors > 0 {
                     Label("\(errors) errors", systemImage: "exclamationmark.triangle")
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                 }
             }
             .font(.caption)
@@ -184,7 +184,7 @@ struct ImportPane: View {
                     if !rebuildProgress.isEmpty && !isRebuilding {
                         Text(rebuildProgress)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

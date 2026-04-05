@@ -19,8 +19,8 @@
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.muzhen.TimeScroll</string>
-		<string>$(AppIdentifierPrefix)com.muzhen.TimeScroll.shared</string>
+		<string>$(AppIdentifierPrefix)com.parrotcycles.scrollback</string>
+		<string>$(AppIdentifierPrefix)com.parrotcycles.scrollback.shared</string>
 	</array>
 </dict>
 </plist>

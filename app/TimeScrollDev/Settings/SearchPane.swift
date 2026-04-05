@@ -3,8 +3,8 @@ import AppKit
 
 @MainActor
 struct SearchPane: View {
-    @ObservedObject var settings: SettingsStore
-    @ObservedObject private var rebuildController = EmbeddingRebuildController.shared
+    @Bindable var settings: SettingsStore
+    private let rebuildController = EmbeddingRebuildController.shared
     @State private var isInstallingModel = false
     @State private var installError: String?
     @State private var availableOllamaModels: [String] = []
@@ -82,7 +82,7 @@ struct SearchPane: View {
                                         TextField("", value: $settings.aiMaxCandidates, formatter: Self.aiIntFormatter)
                                             .frame(width: 90)
                                         Text("rows")
-                                            .foregroundColor(.secondary)
+                                            .foregroundStyle(.secondary)
                                     }
                             }
                         }
@@ -92,7 +92,7 @@ struct SearchPane: View {
                     if settings.embeddingProvider == "mobileclip2" {
                         Text("MobileCLIP2 usually needs a lower similarity threshold than text-only embedding models.")
                             .font(.footnote)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
 
                     embeddingLibraryCard
@@ -109,7 +109,7 @@ struct SearchPane: View {
                 refreshMobileCLIPReleaseIfNeeded()
             }
         }
-        .onChange(of: settings.aiEmbeddingsEnabled) { enabled in
+        .onChange(of: settings.aiEmbeddingsEnabled) { _, enabled in
             if enabled && settings.embeddingProvider == "ollama" {
                 loadOllamaModelsIfNeeded()
                 refreshModelInstallState()
@@ -117,7 +117,7 @@ struct SearchPane: View {
                 refreshMobileCLIPReleaseIfNeeded(force: true)
             }
         }
-        .onChange(of: settings.embeddingProvider) { _ in
+        .onChange(of: settings.embeddingProvider) {
             ensureValidModelSelectionForProvider()
             if settings.embeddingProvider == "ollama" {
                 loadOllamaModelsIfNeeded()
@@ -126,7 +126,7 @@ struct SearchPane: View {
             }
             refreshModelInstallState()
         }
-        .onChange(of: settings.embeddingModel) { _ in
+        .onChange(of: settings.embeddingModel) {
             refreshModelInstallState()
             mobileCLIPError = nil
         }
@@ -157,7 +157,7 @@ struct SearchPane: View {
                     ProgressView()
                     Text("Discovering models…")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             } else {
                 LabeledContent("Model") {
@@ -188,7 +188,7 @@ struct SearchPane: View {
                 if let release = mobileCLIPRelease {
                     Text("Release \(release.tagName)")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
             }
 
@@ -210,7 +210,7 @@ struct SearchPane: View {
 
             Text("Assets are pulled from the latest release in XInTheDark/MobileCLIP2-coreml.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .settingsInsetCard()
     }
@@ -225,7 +225,7 @@ struct SearchPane: View {
 
                 Text(activeEmbeddingSummary)
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
@@ -240,14 +240,14 @@ struct SearchPane: View {
                 if let rebuildStatusText {
                     Text(rebuildStatusText)
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
             }
 
             Text("Changing provider or model only affects new captures until you rebuild.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .settingsInsetCard()
     }
@@ -273,24 +273,24 @@ struct SearchPane: View {
         if settings.embeddingModel.isEmpty {
             Text("Select a model to continue.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         } else if checkingModelInstall {
             HStack(spacing: 8) {
                 ProgressView()
                 Text("Checking install status…")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         } else if modelInstalled {
             Label("Model installed", systemImage: "checkmark.circle.fill")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         } else {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Label("Model not installed", systemImage: "exclamationmark.triangle.fill")
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
 
                     Spacer()
 
@@ -304,7 +304,7 @@ struct SearchPane: View {
                 if let installError {
                     Text(installError)
                         .font(.footnote)
-                        .foregroundColor(.red)
+                        .foregroundStyle(.red)
                 }
             }
         }
@@ -317,7 +317,7 @@ struct SearchPane: View {
                 ProgressView()
                 Text("Checking latest release…")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         } else if let selectedModel = selectedMobileCLIPModel {
             let installed = MobileCLIPModelStore.isInstalled(selectedModel)
@@ -346,19 +346,19 @@ struct SearchPane: View {
 
                 Text(mobileCLIPStatusDetailText(asset: asset))
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .monospacedDigit()
 
                 if let mobileCLIPError {
                     Text(mobileCLIPError)
                         .font(.footnote)
-                        .foregroundColor(.red)
+                        .foregroundStyle(.red)
                 }
             }
         } else {
             Text("Select a MobileCLIP2 model to continue.")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -408,29 +408,29 @@ extension SearchPane {
         if mobileCLIPIsRemoving {
             Label("Removing…", systemImage: "trash")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         } else if installed {
             Label("Installed", systemImage: "checkmark.circle.fill")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         } else if let progress = mobileCLIPDownloadProgress, mobileCLIPActionInFlight {
             if progress < 0.995 {
                 Label("Downloading \(Self.percentString(for: progress))", systemImage: "arrow.down.circle.fill")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             } else {
                 Label("Installing…", systemImage: "shippingbox.fill")
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         } else if !assetAvailable {
             Label("Not published in the latest release", systemImage: "xmark.circle.fill")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         } else {
             Label("Not installed", systemImage: "arrow.down.circle")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -457,9 +457,9 @@ extension SearchPane {
     private func loadOllamaModelsIfNeeded() {
         guard availableOllamaModels.isEmpty, !loadingModels else { return }
         loadingModels = true
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let models = OllamaEmbeddingProvider.listModels()
-            DispatchQueue.main.async {
+            await MainActor.run {
                 availableOllamaModels = models.isEmpty ? ["snowflake-arctic-embed:33m"] : models
                 loadingModels = false
             }
@@ -472,7 +472,7 @@ extension SearchPane {
 
         let model = settings.embeddingModel.isEmpty ? "snowflake-arctic-embed:33m" : settings.embeddingModel
         OllamaEmbeddingProvider.pullModel(model) { success, error in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 isInstallingModel = false
                 if success {
                     refreshModelInstallState()
@@ -556,17 +556,17 @@ extension SearchPane {
         mobileCLIPIsRemoving = true
         mobileCLIPDownloadProgress = nil
         mobileCLIPError = nil
-        DispatchQueue.global(qos: .utility).async {
+        Task.detached(priority: .utility) {
             do {
                 try MobileCLIPInstaller.remove(model: model)
-                DispatchQueue.main.async {
+                await MainActor.run {
                     mobileCLIPActionInFlight = false
                     mobileCLIPIsRemoving = false
                     MobileCLIP2EmbeddingProvider.invalidate(modelName: model.rawValue)
                     EmbeddingService.shared.reloadFromSettings()
                 }
             } catch {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     mobileCLIPActionInFlight = false
                     mobileCLIPIsRemoving = false
                     mobileCLIPError = error.localizedDescription
@@ -583,9 +583,9 @@ extension SearchPane {
         }
         let model = settings.embeddingModel
         checkingModelInstall = true
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let installed = OllamaEmbeddingProvider.isModelInstalled(model)
-            DispatchQueue.main.async {
+            await MainActor.run {
                 modelInstalled = (settings.embeddingModel == model) ? installed : modelInstalled
                 checkingModelInstall = false
             }

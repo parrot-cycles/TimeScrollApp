@@ -78,7 +78,10 @@ final class UpdatesDelegate: NSObject, SPUUpdaterDelegate {
     func feedURLString(for updater: SPUUpdater) -> String? {
         let d = UserDefaults.standard
         let useBeta = (d.object(forKey: "settings.updateChannelBeta") != nil) ? d.bool(forKey: "settings.updateChannelBeta") : false
-        let url = useBeta ? "https://timescroll.updates.muzhen.org/beta/appcast.xml" : "https://timescroll.updates.muzhen.org/stable/appcast.xml"
+        // GitHub Releases-backed appcast. Beta channel reads appcast-beta.xml from the same repo.
+        let url = useBeta
+            ? "https://raw.githubusercontent.com/parrot-cycles/Scrollback/main/appcast-beta.xml"
+            : "https://raw.githubusercontent.com/parrot-cycles/Scrollback/main/appcast.xml"
         print("[Sparkle] feedURLString=\(url)")
         return url
     }

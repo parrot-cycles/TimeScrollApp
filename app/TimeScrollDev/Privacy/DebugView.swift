@@ -17,15 +17,15 @@ struct DebugView: View {
                 Button("Clear FTS") { try? DB.shared.clearFTS(); refresh() }
                 Button(reindexing ? "Reindexing…" : "Reindex from Files") {
                     reindexing = true
-                    DispatchQueue.global(qos: .utility).async {
+                    Task.detached(priority: .utility) {
                         Indexer.shared.rebuildFTSFromFiles()
-                        DispatchQueue.main.async { reindexing = false; refresh() }
+                        await MainActor.run { reindexing = false; refresh() }
                     }
                 }
                 Button("Compact Older") {
-                    DispatchQueue.global(qos: .utility).async {
+                    Task.detached(priority: .utility) {
                         _ = try? Compactor().compactOlderSnapshots()
-                        DispatchQueue.main.async { refresh() }
+                        await MainActor.run { refresh() }
                     }
                 }
                 Menu("Migration fixes") {
@@ -43,7 +43,7 @@ struct DebugView: View {
                     Text("#\(r.id)")
                         .monospaced()
                     Text("\(Date(timeIntervalSince1970: TimeInterval(r.startedAtMs)/1000).description)")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                     Spacer()
                     Text(r.path)
                         .lineLimit(1)
@@ -56,9 +56,9 @@ struct DebugView: View {
         .confirmationDialog("Update DB snapshot paths to the current storage root? This will rewrite the path and thumb_path columns for snapshots which appear to point at a different root.", isPresented: $showMigrationDialog, titleVisibility: .visible) {
             Button("Run", role: .destructive) {
                 isMigrating = true
-                DispatchQueue.global(qos: .utility).async {
+                Task.detached(priority: .utility) {
                     let updated = DB.shared.updateSnapshotPathsToCurrentRoot()
-                    DispatchQueue.main.async {
+                    await MainActor.run {
                         isMigrating = false
                         migrationResult = "Updated \(updated) path/thumb entries"
                         refresh()

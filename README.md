@@ -1,14 +1,14 @@
-# TimeScroll
+# Scrollback
 
 A macOS screen capture and intelligent search app that automatically captures screenshots and lets you search through your visual history.
 
-**Original app**: [timescroll.muzhen.org](https://timescroll.muzhen.org/) by [XInTheDark](https://github.com/XInTheDark)
+**Fork of**: [TimeScroll](https://timescroll.muzhen.org/) by [XInTheDark](https://github.com/XInTheDark) — renamed to Scrollback.
 
 This fork adds ScreenMemory migration tools, UI improvements, and safety enhancements.
 
 ## Download
 
-Pre-built DMG available in [Releases](https://github.com/parrot-cycles/TimeScrollApp/releases).
+Pre-built DMG available in [Releases](https://github.com/parrot-cycles/Scrollback/releases).
 
 ## What's New in v1.1.0
 
@@ -62,20 +62,22 @@ Pre-built DMG available in [Releases](https://github.com/parrot-cycles/TimeScrol
 
 - Multi-Mac sync (capture on each Mac, aggregate in one viewer)
 - Text selection on screenshots (OCR bounding box overlay)
-- Homebrew cask install (`brew install --cask timescroll`)
+- Homebrew cask install (`brew install --cask scrollback`)
 - Enhanced search results navigation
 
 ## Building from Source
+
+The Xcode scheme and project file still use the name `TimeScroll` internally — only the user-visible app name and bundle ID were renamed.
 
 ```bash
 xcodebuild -project app/TimeScroll.xcodeproj -scheme TimeScroll -configuration Release build \
   CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=""
 
 # Re-sign with correct bundle ID for permissions to work
-codesign --force --sign - --identifier "com.muzhen.TimeScroll" \
-  ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/TimeScroll.app
+codesign --force --sign - --identifier "com.parrotcycles.scrollback" \
+  ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/Scrollback.app
 
-cp -R ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/TimeScroll.app /Applications/
+cp -R ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/Scrollback.app /Applications/
 ```
 
 ## Credits

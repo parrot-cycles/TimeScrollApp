@@ -1,6 +1,7 @@
 import Foundation
 import CoreGraphics
 import ImageIO
+import Observation
 #if canImport(SQLCipher)
 import SQLCipher
 #else
@@ -9,7 +10,8 @@ import SQLite3
 
 /// Imports screenshots from ScreenMemory into TimeScroll.
 /// UI state is updated on MainActor; heavy work runs on a background thread.
-final class ScreenMemoryImporter: ObservableObject {
+@Observable
+final class ScreenMemoryImporter {
     enum Mode { case copy, move }
     enum State: Equatable {
         case idle
@@ -24,14 +26,14 @@ final class ScreenMemoryImporter: ObservableObject {
         let destPath: String
     }
 
-    // All @Published properties are updated only via MainActor.run
-    @Published var state: State = .idle
-    @Published var progress: String = ""
-    @Published var imported: Int = 0
-    @Published var total: Int = 0
-    @Published var testItems: [ImportedItem] = []
+    // All properties are updated only via MainActor.run
+    var state: State = .idle
+    var progress: String = ""
+    var imported: Int = 0
+    var total: Int = 0
+    var testItems: [ImportedItem] = []
 
-    private var task: Task<Void, Never>?
+    @ObservationIgnored private var task: Task<Void, Never>?
 
     // MARK: - Public (called from MainActor UI)
 

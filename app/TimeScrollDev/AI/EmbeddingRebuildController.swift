@@ -1,14 +1,16 @@
 import Foundation
+import Observation
 
 @MainActor
-final class EmbeddingRebuildController: ObservableObject {
+@Observable
+final class EmbeddingRebuildController {
     static let shared = EmbeddingRebuildController()
 
-    @Published private(set) var isRunning: Bool = false
-    @Published private(set) var processed: Int = 0
-    @Published private(set) var total: Int = 0
-    @Published private(set) var stored: Int = 0
-    @Published private(set) var lastMessage: String?
+    private(set) var isRunning: Bool = false
+    private(set) var processed: Int = 0
+    private(set) var total: Int = 0
+    private(set) var stored: Int = 0
+    private(set) var lastMessage: String?
 
     private init() {}
 

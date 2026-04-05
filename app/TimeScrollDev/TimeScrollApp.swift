@@ -53,7 +53,7 @@ struct TimeScrollApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(SettingsStore.shared)
+                .environment(SettingsStore.shared)
         }
         .commands {
             CommandGroup(after: .toolbar) {
@@ -63,7 +63,7 @@ struct TimeScrollApp: App {
         }
         Settings {
             PreferencesView()
-                .environmentObject(SettingsStore.shared)
+                .environment(SettingsStore.shared)
         }
     }
 }

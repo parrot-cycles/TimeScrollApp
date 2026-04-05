@@ -3,7 +3,7 @@ import AppKit
 import UniformTypeIdentifiers
 
 struct SnapshotStageView: View {
-    @ObservedObject var model: TimelineModel
+    var model: TimelineModel
     var globalQuery: String = ""
 
     @State private var rects: [CGRect] = []
@@ -79,11 +79,11 @@ struct SnapshotStageView: View {
                         // Avoid flicker: keep background empty while waiting for spinner or image
                         Color.clear
                     } else {
-                        Text("No image").foregroundColor(.secondary)
+                        Text("No image").foregroundStyle(.secondary)
                     }
                 }
             } else {
-                Text("No snapshots").foregroundColor(.secondary)
+                Text("No snapshots").foregroundStyle(.secondary)
             }
 
             // Navigation overlay removed — replaced by bottom navigation bar in TimelineUnifiedView
@@ -107,14 +107,14 @@ struct SnapshotStageView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onChange(of: globalQuery) { _ in
+        .onChange(of: globalQuery) {
             refreshRects()
         }
-        .onChange(of: localQuery) { _ in
+        .onChange(of: localQuery) {
             refreshRects()
         }
         .onAppear { handleSelectionChange() }
-        .onChange(of: model.selected?.id) { _ in
+        .onChange(of: model.selected?.id) {
             handleSelectionChange()
         }
     }
@@ -140,10 +140,10 @@ struct SnapshotStageView: View {
         let fuzz = settings.fuzziness
         let intelligent = settings.intelligentAccuracy
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             let parts = SearchQueryParser.parse(q).parts
             guard !parts.isEmpty else {
-                DispatchQueue.main.async {
+                await MainActor.run {
                     guard token == self.rectRefreshToken else { return }
                     self.rects = []
                 }
@@ -280,7 +280,7 @@ struct SnapshotStageView: View {
                 return true
             }
 
-            DispatchQueue.main.async {
+            await MainActor.run {
                 guard token == self.rectRefreshToken else { return }
                 self.rects = filtered
             }
@@ -347,13 +347,14 @@ struct SnapshotStageView: View {
 
         // Delay the spinner by 0.2s to avoid flicker for very fast loads
         let spinnerToken = token
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(200))
             if self.loadToken == spinnerToken && self.isLoading && self.nsImage == nil {
                 withAnimation(.easeInOut(duration: 0.12)) { self.showSpinner = true }
             }
         }
 
-        DispatchQueue.global(qos: .userInitiated).async {
+        Task.detached(priority: .userInitiated) {
             var image: NSImage? = attemptLoad()
             if image == nil && isVideo {
                 // Try a few short delays to allow a movie fragment to flush
@@ -364,7 +365,7 @@ struct SnapshotStageView: View {
                     if image != nil { break }
                 }
             }
-            DispatchQueue.main.async {
+            await MainActor.run {
                 // Ensure we are still showing the same load attempt
                 guard self.loadToken == token else { return }
                 if let im = image {
@@ -454,9 +455,8 @@ private struct DebugOverlay: View {
         }
         .font(.system(size: 11, weight: .regular, design: .monospaced))
         .padding(8)
-        .background(.black.opacity(0.45))
-        .foregroundColor(.white)
-        .cornerRadius(6)
+        .background(.black.opacity(0.45), in: .rect(cornerRadius: 6))
+        .foregroundStyle(.white)
         .shadow(radius: 3)
     }
 
@@ -470,7 +470,7 @@ private struct DebugOverlay: View {
 }
 
 private struct CenterOverlay: View {
-    @ObservedObject var model: TimelineModel
+    var model: TimelineModel
     var nsImage: NSImage?
     @State private var dragStartX: Double = 0
     @State private var dragStartY: Double = 0
@@ -532,27 +532,28 @@ private struct CenterOverlay: View {
             Button(action: { model.prev() }) {
                 Image(systemName: "chevron.left.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(.white.opacity(model.selectedIndex + 1 < model.metas.count ? 0.95 : 0.35))
+                    .foregroundStyle(.white.opacity(model.selectedIndex + 1 < model.metas.count ? 0.95 : 0.35))
             }
             .buttonStyle(.plain)
             .disabled(!(model.selectedIndex + 1 < model.metas.count))
+            .accessibilityLabel("Previous snapshot")
 
             Text(model.selected.map { Self.df.string(from: Date(timeIntervalSince1970: TimeInterval($0.startedAtMs)/1000)) } ?? "")
                 .font(.system(size: 16, weight: .medium, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
 
             Button(action: { model.next() }) {
                 Image(systemName: "chevron.right.circle.fill")
                     .font(.system(size: 28))
-                    .foregroundColor(.white.opacity(model.selectedIndex - 1 >= 0 ? 0.95 : 0.35))
+                    .foregroundStyle(.white.opacity(model.selectedIndex - 1 >= 0 ? 0.95 : 0.35))
             }
             .buttonStyle(.plain)
             .disabled(!(model.selectedIndex - 1 >= 0))
+            .accessibilityLabel("Next snapshot")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(containerBg)
-        .cornerRadius(20)
+        .background(containerBg, in: .rect(cornerRadius: 20))
         .shadow(color: Color.black.opacity(0.3), radius: 4, x: 0, y: 2)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .offset(x: model.overlayOffsetX, y: model.overlayOffsetY)
@@ -581,7 +582,7 @@ private struct CenterOverlay: View {
 }
 
 private struct ActionsPanel: View {
-    @ObservedObject var model: TimelineModel
+    var model: TimelineModel
     @Binding var localQuery: String
     let onSubmitQuery: () -> Void
     let onCopyImage: () -> Void
@@ -599,6 +600,7 @@ private struct ActionsPanel: View {
                     Image(systemName: "ellipsis.circle")
                         .font(.system(size: 20))
                 }
+                .accessibilityLabel(model.actionPanelExpanded ? "Hide actions" : "Show actions")
                 .buttonStyle(.plain)
             }
 
@@ -626,8 +628,7 @@ private struct ActionsPanel: View {
                     }
                 }
                 .padding(8)
-                .background(.ultraThinMaterial)
-                .cornerRadius(8)
+                .background(.ultraThinMaterial, in: .rect(cornerRadius: 8))
                 .shadow(radius: 2)
             }
         }

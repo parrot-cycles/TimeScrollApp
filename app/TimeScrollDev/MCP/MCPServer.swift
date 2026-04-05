@@ -110,9 +110,9 @@ final class MCPServer {
         ToolsListResult(tools: [
             .init(
                 name: "search_timescroll",
-                title: "Search TimeScroll",
+                title: "Search Scrollback",
                 description: """
-                    Search through the TimeScroll Mac app's database. The database contains many screenshots from the user's Mac over time,
+                    Search through the Scrollback Mac app's database. The database contains many screenshots from the user's Mac over time,
                     allowing the tool to accurately find past activities based on text content.
                     The tool will search through OCR text extracted from the screenshots.
                     """,

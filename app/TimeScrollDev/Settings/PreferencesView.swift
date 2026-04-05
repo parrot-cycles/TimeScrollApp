@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 struct PreferencesView: View {
-    @EnvironmentObject var settings: SettingsStore
+    @Environment(SettingsStore.self) private var settings
 
     var body: some View {
         TabView {
@@ -80,7 +80,7 @@ struct SettingsSectionCard<Content: View>: View {
                 if let subtitle, !subtitle.isEmpty {
                     Text(subtitle)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }

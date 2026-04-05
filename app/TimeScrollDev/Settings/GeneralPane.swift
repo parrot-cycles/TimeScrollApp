@@ -3,7 +3,7 @@ import AppKit
 
 @MainActor
 struct GeneralPane: View {
-    @ObservedObject var settings: SettingsStore
+    @Bindable var settings: SettingsStore
     @State private var showAccessibilityPrompt = false
     @AppStorage("ui.timeline.invertScrollDirection") private var invertTimelineScrollDirection: Bool = false
 
@@ -15,7 +15,7 @@ struct GeneralPane: View {
             Section {
                 HStack {
                     Label("Screen Recording", systemImage: screenRecordingOK ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundColor(screenRecordingOK ? .green : .red)
+                        .foregroundStyle(screenRecordingOK ? .green : .red)
                     Spacer()
                     if !screenRecordingOK {
                         Button("Grant") { Permissions.requestScreenRecording(); refreshPermissions() }
@@ -24,7 +24,7 @@ struct GeneralPane: View {
                 }
                 HStack {
                     Label("Accessibility", systemImage: accessibilityOK ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundColor(accessibilityOK ? .green : .red)
+                        .foregroundStyle(accessibilityOK ? .green : .red)
                     Spacer()
                     if !accessibilityOK {
                         Button("Grant") { Permissions.requestAccessibility(); refreshPermissions() }
@@ -41,7 +41,7 @@ struct GeneralPane: View {
                 Toggle("Start minimized (menu bar only)", isOn: $settings.startMinimized)
                 Toggle("Start recording on launch", isOn: $settings.startRecordingOnStart)
                 Toggle("Show Dock icon when no window", isOn: $settings.showDockIcon)
-                    .onChange(of: settings.showDockIcon) { newValue in
+                    .onChange(of: settings.showDockIcon) { _, newValue in
                         let hasUserWindow = NSApplication.shared.ts_hasVisibleUserWindow
                         if !hasUserWindow {
                             NSApplication.shared.setActivationPolicy(newValue ? .regular : .accessory)
@@ -61,7 +61,7 @@ struct GeneralPane: View {
                     .labelsHidden()
                     .pickerStyle(.segmented)
                     .frame(maxWidth: 320)
-                    .onChange(of: settings.textProcessingMode) { newValue in
+                    .onChange(of: settings.textProcessingMode) { _, newValue in
                         if newValue == .accessibility && !Permissions.isAccessibilityGranted() {
                             showAccessibilityPrompt = true
                         }
@@ -113,7 +113,7 @@ struct GeneralPane: View {
                         TextField("", value: $settings.retentionDays, formatter: Self.intFormatter)
                             .frame(width: 70)
                         Text("days")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -125,7 +125,7 @@ struct GeneralPane: View {
                             .frame(width: 46, alignment: .trailing)
                     }
                 }
-                .onChange(of: settings.captureScale) { _ in
+                .onChange(of: settings.captureScale) {
                     Task { @MainActor in
                         await AppState.shared.restartCaptureIfRunning()
                     }
@@ -141,12 +141,12 @@ struct GeneralPane: View {
                     .labelsHidden()
                     .frame(maxWidth: 220)
                 }
-                .onChange(of: settings.captureDisplayMode) { _ in
+                .onChange(of: settings.captureDisplayMode) {
                     Task { @MainActor in
                         await AppState.shared.restartCaptureIfRunning()
                     }
                 }
-                .onChange(of: settings.captureMinInterval) { newValue in
+                .onChange(of: settings.captureMinInterval) { _, newValue in
                     if settings.adaptiveMaxInterval < newValue {
                         settings.adaptiveMaxInterval = newValue
                     }
@@ -229,7 +229,8 @@ struct GeneralPane: View {
 
     private func refreshPermissions() {
         Permissions.reprobeScreenRecording()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(1500))
             screenRecordingOK = Permissions.isScreenRecordingGranted()
             accessibilityOK = Permissions.isAccessibilityGranted()
         }
@@ -250,10 +251,10 @@ private struct AccessibilityPermissionSheet: View {
                     .font(.title3)
                     .bold()
             }
-            Text("TimeScroll can read on-screen text via macOS Accessibility. This uses much less energy than OCR.")
+            Text("Scrollback can read on-screen text via macOS Accessibility. This uses much less energy than OCR.")
                 .font(.headline)
             VStack(alignment: .leading, spacing: 8) {
-                Label("Open System Settings → Privacy & Security → Accessibility and allow TimeScroll.", systemImage: "gearshape")
+                Label("Open System Settings → Privacy & Security → Accessibility and allow Scrollback.", systemImage: "gearshape")
                 Label("After granting access, switch back to Direct mode or reopen this pane.", systemImage: "checkmark.circle")
             }
             HStack {

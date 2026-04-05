@@ -11,11 +11,11 @@ extension AppDelegate {
             return
         }
 
-        let root = ContentView().environmentObject(SettingsStore.shared)
+        let root = ContentView().environment(SettingsStore.shared)
         let hosting = NSHostingController(rootView: root)
         let win = NSWindow(contentViewController: hosting)
         win.styleMask.insert([.titled, .closable, .miniaturizable, .resizable])
-        win.title = "TimeScroll"
+        win.title = "Scrollback"
         win.setContentSize(NSSize(width: 1000, height: 700))
         win.contentMinSize = NSSize(width: 1000, height: 700)
         win.identifier = NSUserInterfaceItemIdentifier("MainWindow")
@@ -30,11 +30,11 @@ extension AppDelegate {
 
     func showOnboardingWindow() {
         if onboardingWC == nil {
-            let root = OnboardingView().environmentObject(SettingsStore.shared)
+            let root = OnboardingView().environment(SettingsStore.shared)
             let hosting = NSHostingController(rootView: root)
             let win = NSWindow(contentViewController: hosting)
             win.styleMask.insert([.titled, .closable])
-            win.title = "TimeScroll Setup"
+            win.title = "Scrollback Setup"
             win.setContentSize(NSSize(width: 640, height: 380))
             win.isMovableByWindowBackground = true
             win.center()
@@ -60,7 +60,7 @@ extension AppDelegate {
 
         // Fallback: create a simple, resizable window with a sensible minimum size
         if prefsWC == nil {
-            let root = PreferencesView().environmentObject(SettingsStore.shared)
+            let root = PreferencesView().environment(SettingsStore.shared)
             let hosting = NSHostingController(rootView: root)
             let win = NSWindow(contentViewController: hosting)
             win.styleMask.insert([.titled, .closable, .miniaturizable, .resizable])

@@ -3,7 +3,7 @@ import AppKit
 import UniformTypeIdentifiers
 
 struct PrivacyPane: View {
-  @ObservedObject var settings: SettingsStore
+  @Bindable var settings: SettingsStore
   @State private var selection = Set<String>()
 
   var body: some View {
@@ -23,7 +23,7 @@ struct PrivacyPane: View {
         HStack(spacing: 10) {
           Text(selectionSummary)
             .font(.footnote)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
           Spacer()
 
@@ -38,7 +38,7 @@ struct PrivacyPane: View {
         }
       }
     }
-    .onChange(of: settings.blacklistBundleIds) { newList in
+    .onChange(of: settings.blacklistBundleIds) { _, newList in
       Task { @MainActor in
         await AppState.shared.captureManager.updateExclusions(with: newList)
       }
@@ -60,14 +60,14 @@ struct PrivacyPane: View {
     VStack(spacing: 10) {
       Image(systemName: "checkmark.shield")
         .font(.system(size: 28, weight: .medium))
-        .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
 
       Text("No apps excluded")
         .font(.headline)
 
       Text("Add an app here if you never want its windows to be captured.")
         .font(.subheadline)
-        .foregroundColor(.secondary)
+        .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)
     }
     .frame(maxWidth: .infinity)
@@ -140,7 +140,7 @@ private struct PrivacyAppRow: View {
         Text(displayName)
         Text(bundleId)
           .font(.caption)
-          .foregroundColor(.secondary)
+          .foregroundStyle(.secondary)
       }
 
       Spacer(minLength: 0)
@@ -158,7 +158,7 @@ private struct PrivacyAppRow: View {
         Image(systemName: "app")
           .resizable()
           .aspectRatio(contentMode: .fit)
-          .foregroundColor(.secondary)
+          .foregroundStyle(.secondary)
       }
     }
     .frame(width: 20, height: 20)
