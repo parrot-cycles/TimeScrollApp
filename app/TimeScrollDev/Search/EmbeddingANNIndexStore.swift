@@ -12,7 +12,7 @@ final class EmbeddingANNIndexStore {
         let updatedAtMs: Int64
     }
 
-    private let queue = DispatchQueue(label: "TimeScroll.Search.EmbeddingANNIndexStore", qos: .utility)
+    private let queue = DispatchQueue(label: "Scrollback.Search.EmbeddingANNIndexStore", qos: .utility)
     private var cache: [VectorSearchIdentity: EmbeddingANNIndex] = [:]
     private var buildsInFlight: Set<VectorSearchIdentity> = []
     private var buildGenerations: [VectorSearchIdentity: Int] = [:]

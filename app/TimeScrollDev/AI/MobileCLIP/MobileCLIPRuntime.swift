@@ -20,7 +20,7 @@ final class MobileCLIPRuntime {
 
     init(model: MobileCLIPModelCatalog.Model) throws {
         guard let manifest = MobileCLIPModelStore.manifest(for: model) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 10, userInfo: [NSLocalizedDescriptionKey: "MobileCLIP2 model \(model.rawValue) is not installed"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 10, userInfo: [NSLocalizedDescriptionKey: "MobileCLIP2 model \(model.rawValue) is not installed"])
         }
         let compiledArtifacts = try MobileCLIPModelStore.prepareCompiledArtifacts(for: model)
         self.model = model
@@ -54,7 +54,7 @@ final class MobileCLIPRuntime {
         ])
         let output = try textModel().prediction(from: provider)
         guard let multiArray = output.featureValue(for: "embedding")?.multiArrayValue else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 11, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 text embedding output"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 11, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 text embedding output"])
         }
         return (multiArray.toFloatArray(), tokenCount, contextLength)
     }
@@ -66,7 +66,7 @@ final class MobileCLIPRuntime {
         ])
         let output = try imageModel().prediction(from: provider)
         guard let multiArray = output.featureValue(for: "embedding")?.multiArrayValue else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 12, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 image embedding output"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 12, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 image embedding output"])
         }
         return multiArray.toFloatArray()
     }
@@ -108,7 +108,7 @@ final class MobileCLIPRuntime {
             &output
         )
         guard status == kCVReturnSuccess, let output else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 13, userInfo: [NSLocalizedDescriptionKey: "Failed to create MobileCLIP2 input buffer"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 13, userInfo: [NSLocalizedDescriptionKey: "Failed to create MobileCLIP2 input buffer"])
         }
         Self.ciContext.render(resized, to: output)
         return output

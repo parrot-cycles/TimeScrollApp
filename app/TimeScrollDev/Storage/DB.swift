@@ -37,7 +37,7 @@ final class DB {
 
     private(set) var db: OpaquePointer?
     private(set) var dbURL: URL?
-    private let queue = DispatchQueue(label: "com.timescroll.db")
+    private let queue = DispatchQueue(label: "com.parrotcycles.scrollback.db")
     private let queueKey = DispatchSpecificKey<Bool>()
 
     func onQueueSync<T>(_ block: () throws -> T) rethrows -> T {

@@ -9,7 +9,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct TimeScrollApp: App {
+struct ScrollbackApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("ui.timeline.compressed") private var compressedTimeline: Bool = true
     @AppStorage("ui.timeline.invertScrollDirection") private var invertTimelineScrollDirection: Bool = false

@@ -41,7 +41,7 @@ final class MCPServer {
                 print(s)
             }
         } catch {
-            fputs("[timescroll-mcp] encode error: \(error)\n", stderr)
+            fputs("[scrollback-mcp] encode error: \(error)\n", stderr)
         }
     }
 
@@ -57,7 +57,7 @@ final class MCPServer {
         for line in io.lines() {
             MCPFileLogger.log("in: \(line)")
             guard let req = try? JSONDecoder().decode(RPCRequest.self, from: Data(line.utf8)) else {
-                fputs("[timescroll-mcp] bad JSON\n", stderr)
+                fputs("[scrollback-mcp] bad JSON\n", stderr)
                 MCPFileLogger.log("bad JSON input: \(line.prefix(256))…")
                 continue
             }
@@ -79,7 +79,7 @@ final class MCPServer {
                 let caps: [String: AnyEncodable] = ["tools": AnyEncodable(["listChanged": false])]
                 let res = InitializeResult(protocolVersion: "2024-11-05",
                                            capabilities: caps,
-                                           serverInfo: ["name":"timescroll-mcp","version":"0.1.0"])
+                                           serverInfo: ["name":"scrollback-mcp","version":"0.1.0"])
                 sendJSON(RPCResponse(id: id, result: res))
                 MCPFileLogger.log("initialize response sent")
 
@@ -94,7 +94,7 @@ final class MCPServer {
                 }
                 MCPFileLogger.log("tools/call id=\(id) name=\(params.name)")
                 switch params.name {
-                case "search_timescroll":
+                case "search_scrollback":
                     Task { await handleSearch(id: id, argsAny: params.arguments) }
                 default: sendError(id: id, code: -32601, msg: "Unknown tool")
                 }
@@ -109,7 +109,7 @@ final class MCPServer {
     private func toolsList() -> ToolsListResult {
         ToolsListResult(tools: [
             .init(
-                name: "search_timescroll",
+                name: "search_scrollback",
                 title: "Search Scrollback",
                 description: """
                     Search through the Scrollback Mac app's database. The database contains many screenshots from the user's Mac over time,
@@ -132,7 +132,7 @@ final class MCPServer {
                     isError: true
                 )
                 sendJSON(RPCResponse(id: id, result: err))
-                MCPFileLogger.log("tools/call search_timescroll id=\(id) denied: \(msg)")
+                MCPFileLogger.log("tools/call search_scrollback id=\(id) denied: \(msg)")
                 return
             }
         }

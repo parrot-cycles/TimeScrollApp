@@ -10,7 +10,7 @@ enum MobileCLIPInstaller {
     ) async throws -> MobileCLIPLatestRelease {
         let release = try await MobileCLIPReleaseService.fetchLatestRelease()
         guard let asset = release.asset(for: model) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 2, userInfo: [NSLocalizedDescriptionKey: "No release asset is available for \(model.rawValue) in the latest MobileCLIP2-coreml release"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 2, userInfo: [NSLocalizedDescriptionKey: "No release asset is available for \(model.rawValue) in the latest MobileCLIP2-coreml release"])
         }
 
         let tempRoot = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -28,7 +28,7 @@ enum MobileCLIPInstaller {
         let extractedBundleURL = unzipRoot.appendingPathComponent(model.rawValue, isDirectory: true)
         let extractedManifestURL = extractedBundleURL.appendingPathComponent("manifest.json")
         guard FileManager.default.fileExists(atPath: extractedManifestURL.path) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 3, userInfo: [NSLocalizedDescriptionKey: "Downloaded archive for \(model.rawValue) is missing manifest.json"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 3, userInfo: [NSLocalizedDescriptionKey: "Downloaded archive for \(model.rawValue) is missing manifest.json"])
         }
 
         let destinationURL = MobileCLIPModelStore.bundleURL(for: model)
@@ -66,7 +66,7 @@ enum MobileCLIPInstaller {
                 }
 
                 guard let temporaryURL, let response else {
-                    continuation.resume(throwing: NSError(domain: "TimeScroll.MobileCLIP", code: 4, userInfo: [NSLocalizedDescriptionKey: "Failed to download \(asset.name)"]))
+                    continuation.resume(throwing: NSError(domain: "Scrollback.MobileCLIP", code: 4, userInfo: [NSLocalizedDescriptionKey: "Failed to download \(asset.name)"]))
                     return
                 }
 
@@ -86,7 +86,7 @@ enum MobileCLIPInstaller {
         }
 
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 4, userInfo: [NSLocalizedDescriptionKey: "Failed to download \(asset.name)"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 4, userInfo: [NSLocalizedDescriptionKey: "Failed to download \(asset.name)"])
         }
         if FileManager.default.fileExists(atPath: destinationURL.path) {
             try FileManager.default.removeItem(at: destinationURL)
@@ -99,7 +99,7 @@ enum MobileCLIPInstaller {
         let data = try Data(contentsOf: archiveURL, options: [.mappedIfSafe])
         let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
         guard digest == expected else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 5, userInfo: [NSLocalizedDescriptionKey: "Checksum mismatch for \(asset.name)"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 5, userInfo: [NSLocalizedDescriptionKey: "Checksum mismatch for \(asset.name)"])
         }
     }
 
@@ -110,7 +110,7 @@ enum MobileCLIPInstaller {
         try process.run()
         process.waitUntilExit()
         guard process.terminationStatus == 0 else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 6, userInfo: [NSLocalizedDescriptionKey: "Failed to unpack \(archiveURL.lastPathComponent)"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 6, userInfo: [NSLocalizedDescriptionKey: "Failed to unpack \(archiveURL.lastPathComponent)"])
         }
     }
 }

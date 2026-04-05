@@ -17,7 +17,7 @@ enum StoragePaths {
     // Public/local builds must NOT fall back to ~/Library/Group Containers/... because macOS
     // treats that as protected "other apps' data" and will repeatedly prompt for access.
     static let appGroupID = "group.com.muzhen.TimeScroll.shared"
-    static let sharedStateQueue = DispatchQueue(label: "TimeScroll.StoragePaths.SharedState")
+    static let sharedStateQueue = DispatchQueue(label: "Scrollback.StoragePaths.SharedState")
     static let sharedStateFilename = "shared-settings.plist"
     static let sharedSubdirectoryName = "Shared"
 

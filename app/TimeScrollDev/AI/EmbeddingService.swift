@@ -349,7 +349,7 @@ final class OllamaEmbeddingProvider {
     private static let embedRequestTimeout: TimeInterval = 12
     private static let metadataRequestTimeout: TimeInterval = 5
     private static let listRequestTimeout: TimeInterval = 5
-    private static let metadataQueue = DispatchQueue(label: "com.timescroll.ollama.metadata", attributes: .concurrent)
+    private static let metadataQueue = DispatchQueue(label: "com.parrotcycles.scrollback.ollama.metadata", attributes: .concurrent)
     private static var dimCache: [String: Int] = [:]
     private static let dimDefaultsKey = "embedding.ollamaDims"
     private static var hasLoadedCache = false

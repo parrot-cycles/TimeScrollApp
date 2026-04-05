@@ -3,8 +3,8 @@ import Foundation
 final class StorageMaintenanceManager {
     static let shared = StorageMaintenanceManager()
 
-    private let workQueue = DispatchQueue(label: "TimeScroll.StorageMaintenance", qos: .utility)
-    private let stateQueue = DispatchQueue(label: "TimeScroll.StorageMaintenance.State")
+    private let workQueue = DispatchQueue(label: "Scrollback.StorageMaintenance", qos: .utility)
+    private let stateQueue = DispatchQueue(label: "Scrollback.StorageMaintenance.State")
     private var timer: Timer?
     private var running = false
 

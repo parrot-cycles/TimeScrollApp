@@ -50,7 +50,7 @@ enum MobileCLIPModelStore {
     static func prepareCompiledArtifacts(for model: MobileCLIPModelCatalog.Model) throws -> (image: URL, text: URL) {
         guard let imageSourceURL = imageEncoderURL(for: model),
               let textSourceURL = textEncoderURL(for: model) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 20, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 model artifacts for \(model.rawValue)"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 20, userInfo: [NSLocalizedDescriptionKey: "Missing MobileCLIP2 model artifacts for \(model.rawValue)"])
         }
 
         let compiledRoot = bundleURL(for: model).appendingPathComponent("Compiled", isDirectory: true)

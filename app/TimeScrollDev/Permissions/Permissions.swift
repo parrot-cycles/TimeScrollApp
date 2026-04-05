@@ -22,7 +22,7 @@ enum Permissions {
     // MARK: - Cached async probe for Screen Recording
 
     private static var _screenRecordingProbeResult: Bool?
-    private static let probeQueue = DispatchQueue(label: "TimeScroll.PermissionProbe")
+    private static let probeQueue = DispatchQueue(label: "Scrollback.PermissionProbe")
 
     /// Call once on app launch to probe actual screen recording access in the background.
     /// The result is cached and used by isScreenRecordingGranted().

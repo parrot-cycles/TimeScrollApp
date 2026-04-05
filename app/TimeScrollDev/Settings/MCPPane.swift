@@ -25,7 +25,7 @@ struct MCPPane: View {
         """
         {
             "mcpServers": {
-                "timescroll": {
+                "scrollback": {
                     "type": "stdio",
                     "command": "\(helperPath)",
                     "args": [],
@@ -37,7 +37,7 @@ struct MCPPane: View {
     }
 
     private var helperPath: String { Self.helperExecutable(for: Bundle.main.bundleURL) }
-    private var cliSnippet: String { "claude mcp add --transport stdio timescroll -- \"\(helperPath)\"" }
+    private var cliSnippet: String { "claude mcp add --transport stdio scrollback -- \"\(helperPath)\"" }
 
     var body: some View {
         Form {
@@ -103,6 +103,6 @@ struct MCPPane: View {
     }
 
     private var logURL: URL? {
-        StoragePaths.sharedLogURL(filename: "timescroll-mcp.log")
+        StoragePaths.sharedLogURL(filename: "scrollback-mcp.log")
     }
 }

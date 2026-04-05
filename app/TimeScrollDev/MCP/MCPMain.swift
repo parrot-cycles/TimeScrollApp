@@ -4,7 +4,7 @@ import Foundation
 struct MCPMain {
 	static func start() {
 		setbuf(stdout, nil) // flush JSON lines promptly
-		fputs("[timescroll-mcp] starting\n", stderr)
+		fputs("[scrollback-mcp] starting\n", stderr)
 		MCPFileLogger.log("helper starting")
 		let server = MCPServer()
 		Task.detached(priority: .userInitiated) {

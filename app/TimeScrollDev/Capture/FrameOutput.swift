@@ -22,9 +22,9 @@ final class FrameOutput: NSObject, SCStreamOutput {
     }
 
     // Work infra
-    let workQueue = DispatchQueue(label: "TimeScroll.Capture.Work", qos: .utility)
+    let workQueue = DispatchQueue(label: "Scrollback.Capture.Work", qos: .utility)
     // Dedicated serial queue for OCR so it does not contend with encode path
-    let ocrQueue = DispatchQueue(label: "TimeScroll.OCR", qos: .utility)
+    let ocrQueue = DispatchQueue(label: "Scrollback.OCR", qos: .utility)
     let onSnapshot: (URL) -> Void
     let encoder = ImageEncoder()
     let hasher = ImageHasher()

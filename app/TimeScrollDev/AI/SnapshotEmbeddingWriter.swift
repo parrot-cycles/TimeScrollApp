@@ -58,13 +58,13 @@ final class SnapshotEmbeddingWriter {
         let defaults = UserDefaults.standard
         let aiEnabled = defaults.bool(forKey: "settings.aiEmbeddingsEnabled")
         guard aiEnabled else {
-            throw NSError(domain: "TimeScroll.AI", code: 40, userInfo: [NSLocalizedDescriptionKey: "Enable AI search before rebuilding embeddings."])
+            throw NSError(domain: "Scrollback.AI", code: 40, userInfo: [NSLocalizedDescriptionKey: "Enable AI search before rebuilding embeddings."])
         }
 
         let service = EmbeddingService.shared
         service.reloadFromSettings()
         guard service.dim > 0 else {
-            throw NSError(domain: "TimeScroll.AI", code: 41, userInfo: [NSLocalizedDescriptionKey: "The selected embedding model is not ready yet."])
+            throw NSError(domain: "Scrollback.AI", code: 41, userInfo: [NSLocalizedDescriptionKey: "The selected embedding model is not ready yet."])
         }
 
         let provider = service.providerID

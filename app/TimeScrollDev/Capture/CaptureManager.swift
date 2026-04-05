@@ -9,7 +9,7 @@ final class CaptureManager: NSObject {
     private var configuredProbeIntervals: [Double] = []
     private var outputs: [FrameOutput] = []
     private var capturedDisplays: [SCDisplay] = []
-    private let outputQueue = DispatchQueue(label: "TimeScroll.Capture.Output")
+    private let outputQueue = DispatchQueue(label: "Scrollback.Capture.Output")
     private let streamDelegate = StreamDelegate()
     private let onSnapshot: (URL) -> Void
 

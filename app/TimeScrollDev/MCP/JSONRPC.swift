@@ -54,7 +54,7 @@ final class LineIO {
             let data = try JSONEncoder().encode(v)
             if let s = String(data: data, encoding: .utf8) { print(s) }
         } catch {
-            fputs("[timescroll-mcp] encode error: \(error)\n", stderr)
+            fputs("[scrollback-mcp] encode error: \(error)\n", stderr)
         }
     }
     func writeError(id: RPCID, code: Int, msg: String) {
@@ -64,7 +64,7 @@ final class LineIO {
 
 // Lightweight file logger for the MCP helper. Keep usage minimal to avoid interfering with stdout.
 enum MCPFileLogger {
-    private static let q = DispatchQueue(label: "timescroll.mcp.logger")
+    private static let q = DispatchQueue(label: "scrollback.mcp.logger")
     private static let appGroupID = "group.com.muzhen.TimeScroll.shared"
 
     static var logURL: URL {
@@ -75,7 +75,7 @@ enum MCPFileLogger {
         if !FileManager.default.fileExists(atPath: base.path) {
             try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         }
-        return base.appendingPathComponent("timescroll-mcp.log")
+        return base.appendingPathComponent("scrollback-mcp.log")
     }
 
     static func log(_ message: String) {

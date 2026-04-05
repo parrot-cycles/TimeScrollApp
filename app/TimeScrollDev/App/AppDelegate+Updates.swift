@@ -5,18 +5,18 @@ import Sparkle
 #endif
 
 extension Notification.Name {
-    static let TimeScrollCheckForUpdates = Notification.Name("TimeScroll.CheckForUpdates")
-    static let TimeScrollApplyUpdatePrefs = Notification.Name("TimeScroll.ApplyUpdatePrefs")
+    static let ScrollbackCheckForUpdates = Notification.Name("Scrollback.CheckForUpdates")
+    static let ScrollbackApplyUpdatePrefs = Notification.Name("Scrollback.ApplyUpdatePrefs")
 }
 
 extension AppDelegate {
     // MARK: - Updates
     @objc func checkForUpdates(_ sender: Any?) {
-        NotificationCenter.default.post(name: .TimeScrollCheckForUpdates, object: nil)
+        NotificationCenter.default.post(name: .ScrollbackCheckForUpdates, object: nil)
     }
 
     @objc func onMenuCheckForUpdates(_ sender: Any?) {
-        NotificationCenter.default.post(name: .TimeScrollCheckForUpdates, object: nil)
+        NotificationCenter.default.post(name: .ScrollbackCheckForUpdates, object: nil)
     }
 
     // Convenience for SwiftUI/others
@@ -26,14 +26,14 @@ extension AppDelegate {
 
     func installUpdateNotificationObservers() {
         let nc = NotificationCenter.default
-        let t1 = nc.addObserver(forName: .TimeScrollApplyUpdatePrefs, object: nil, queue: .main) { [weak self] _ in
+        let t1 = nc.addObserver(forName: .ScrollbackApplyUpdatePrefs, object: nil, queue: .main) { [weak self] _ in
             #if canImport(Sparkle)
             Task { @MainActor in self?.applySparklePrefsFromSettings() }
             #endif
         }
-        let t2 = nc.addObserver(forName: .TimeScrollCheckForUpdates, object: nil, queue: .main) { [weak self] _ in
+        let t2 = nc.addObserver(forName: .ScrollbackCheckForUpdates, object: nil, queue: .main) { [weak self] _ in
             #if canImport(Sparkle)
-            print("[Sparkle] Notification received: TimeScrollCheckForUpdates")
+            print("[Sparkle] Notification received: ScrollbackCheckForUpdates")
             Task { @MainActor in
                 guard let self else { return }
                 let up = self.updaterController.updater

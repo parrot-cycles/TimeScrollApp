@@ -17,7 +17,7 @@ final class Indexer {
     }
 
     // Thermal cooldown window for OCR (no baseline throttle)
-    private let cooldownQueue = DispatchQueue(label: "TimeScroll.OCRCooldown")
+    private let cooldownQueue = DispatchQueue(label: "Scrollback.OCRCooldown")
     private var ocrCooldownUntil: TimeInterval = 0
 
     func setOCRCooldown(seconds: Double) {

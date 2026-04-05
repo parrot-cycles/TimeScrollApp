@@ -17,7 +17,7 @@ final class HEVCVideoStore {
     private let fps: Int32 = 5
 
     // State
-    private let queue = DispatchQueue(label: "TimeScroll.HEVCVideoStore")
+    private let queue = DispatchQueue(label: "Scrollback.HEVCVideoStore")
     private let ciContext = CIContext(options: nil)
     private var current: Active?
     #if canImport(Collections)

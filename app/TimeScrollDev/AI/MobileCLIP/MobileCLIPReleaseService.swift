@@ -33,7 +33,7 @@ enum MobileCLIPReleaseService {
     static func fetchLatestRelease() async throws -> MobileCLIPLatestRelease {
         let (data, response) = try await URLSession.shared.data(from: MobileCLIPModelCatalog.latestReleaseAPIURL)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw NSError(domain: "TimeScroll.MobileCLIP", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to load MobileCLIP2 release metadata"])
+            throw NSError(domain: "Scrollback.MobileCLIP", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to load MobileCLIP2 release metadata"])
         }
         let payload = try decoder.decode(GitHubReleasePayload.self, from: data)
         return MobileCLIPLatestRelease(

@@ -709,7 +709,7 @@ enum SnapshotActions {
                     }
                     try data.write(to: dest, options: Data.WritingOptions.atomic)
                 } else {
-                    let tmp = dest.deletingLastPathComponent().appendingPathComponent(".timescrolldev-tmp-\(UUID().uuidString)")
+                    let tmp = dest.deletingLastPathComponent().appendingPathComponent(".scrollbackdev-tmp-\(UUID().uuidString)")
                     try FileManager.default.copyItem(at: url, to: tmp)
                     let _ = try FileManager.default.replaceItemAt(dest, withItemAt: tmp)
                 }

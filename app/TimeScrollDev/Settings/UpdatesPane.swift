@@ -40,7 +40,7 @@ struct UpdatesPane: View {
 
             Section(header: Text("Manual")) {
                 Button("Check for Updates…") {
-                    NotificationCenter.default.post(name: .TimeScrollCheckForUpdates, object: nil)
+                    NotificationCenter.default.post(name: .ScrollbackCheckForUpdates, object: nil)
                 }
             }
         }
@@ -49,6 +49,6 @@ struct UpdatesPane: View {
     }
 
     private func applySparkle() {
-        NotificationCenter.default.post(name: .TimeScrollApplyUpdatePrefs, object: nil)
+        NotificationCenter.default.post(name: .ScrollbackApplyUpdatePrefs, object: nil)
     }
 }
