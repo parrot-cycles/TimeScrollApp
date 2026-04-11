@@ -72,7 +72,7 @@ extension AppDelegate {
             return
         }
         let d = UserDefaults.standard
-        let showDock = d.object(forKey: "settings.showDockIcon") != nil ? d.bool(forKey: "settings.showDockIcon") : true
+        let showDock = d.object(forKey: "settings.showDockIcon") != nil ? d.bool(forKey: "settings.showDockIcon") : false
         NSApp.setActivationPolicy(showDock ? .regular : .accessory)
     }
 

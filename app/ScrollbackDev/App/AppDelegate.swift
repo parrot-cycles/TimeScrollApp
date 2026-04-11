@@ -79,10 +79,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.installUpdateNotificationObservers()
             self?.installSleepWakeObservers()
             StorageMaintenanceManager.shared.start()
-            // Show onboarding if permissions are missing; otherwise honor auto-start
+            // Show onboarding if permissions are missing; otherwise open the main window
+            // and honor auto-start. Respect startMinimized preference (menu-bar-only launch).
+            let startMin = UserDefaults.standard.object(forKey: "settings.startMinimized") != nil
+                ? UserDefaults.standard.bool(forKey: "settings.startMinimized")
+                : false
             if !Permissions.isScreenRecordingGranted() {
                 self?.showOnboardingWindow()
             } else {
+                if !startMin { self?.showMainWindow() }
                 self?.applyAutoStartCaptureIfNeeded()
             }
             // Prompt unlock if vault is enabled
@@ -97,6 +102,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateNotiTokens.removeAll()
         for token in powerNotiTokens { NotificationCenter.default.removeObserver(token) }
         powerNotiTokens.removeAll()
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag {
+            showMainWindow()
+        }
+        return true
     }
 
     func applicationWillTerminate(_ notification: Notification) {

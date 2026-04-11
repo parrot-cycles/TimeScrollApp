@@ -1,6 +1,6 @@
 //
-//  TimeScrollApp.swift
-//  TimeScroll
+//  ScrollbackApp.swift
+//  Scrollback
 //
 //  Created by Muzhen J on 9/18/25.
 //
@@ -54,8 +54,8 @@ struct ScrollbackApp: App {
         }
     }
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Settings {
+            PreferencesView()
                 .environment(SettingsStore.shared)
         }
         .commands {
@@ -63,10 +63,6 @@ struct ScrollbackApp: App {
                 Toggle("Compressed Timeline", isOn: $compressedTimeline)
                 Toggle("Invert Timeline Scroll", isOn: $invertTimelineScrollDirection)
             }
-        }
-        Settings {
-            PreferencesView()
-                .environment(SettingsStore.shared)
         }
     }
 }
