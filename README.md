@@ -67,17 +67,17 @@ Pre-built DMG available in [Releases](https://github.com/parrot-cycles/Scrollbac
 
 ## Building from Source
 
-The Xcode scheme and project file still use the name `TimeScroll` internally — only the user-visible app name and bundle ID were renamed.
+The Xcode scheme and project file still use the name `Scrollback` — only the user-visible app name and bundle ID were renamed.
 
 ```bash
-xcodebuild -project app/TimeScroll.xcodeproj -scheme TimeScroll -configuration Release build \
+xcodebuild -project app/Scrollback.xcodeproj -scheme Scrollback -configuration Release build \
   CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=""
 
 # Re-sign with correct bundle ID for permissions to work
 codesign --force --sign - --identifier "com.parrotcycles.scrollback" \
-  ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/Scrollback.app
+  ~/Library/Developer/Xcode/DerivedData/Scrollback-*/Build/Products/Release/Scrollback.app
 
-cp -R ~/Library/Developer/Xcode/DerivedData/TimeScroll-*/Build/Products/Release/Scrollback.app /Applications/
+cp -R ~/Library/Developer/Xcode/DerivedData/Scrollback-*/Build/Products/Release/Scrollback.app /Applications/
 ```
 
 ## Credits
