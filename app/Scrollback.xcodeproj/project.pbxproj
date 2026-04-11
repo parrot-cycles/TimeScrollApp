@@ -1,0 +1,1245 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C43960542ED30B9600B5EC03 /* SQLCipher in Frameworks */ = {isa = PBXBuildFile; productRef = C43960532ED30B9600B5EC03 /* SQLCipher */; };
+		C44CC3162EAA2D6200387344 /* CoreSearch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */; };
+		C44CC3202EAA2D6200387344 /* CoreSearch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */; };
+		C44CC3212EAA2D6200387344 /* CoreSearch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C44CC3482EAA331000387344 /* SQLCipher in Frameworks */ = {isa = PBXBuildFile; productRef = C44CC3472EAA331000387344 /* SQLCipher */; };
+		C45777802E93EFE9007E2F3D /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = C457777F2E93EFE9007E2F3D /* Collections */; };
+		C4B151FF2E8FDB30003BBD66 /* SQLCipher in Frameworks */ = {isa = PBXBuildFile; productRef = C4B151FE2E8FDB30003BBD66 /* SQLCipher */; };
+		C4C56C552EAB6B910073342F /* CoreSearch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */; };
+		C4C56C562EAB6B910073342F /* CoreSearch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C4C56C642EAB6D4C0073342F /* scrollback-mcp.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = C4C56C2D2EAB6AE50073342F /* scrollback-mcp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C4F1215A2E7EEDDC00AB38FC /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = C4F121592E7EEDDC00AB38FC /* Sparkle */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C44CC3172EAA2D6200387344 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C44CC30A2EAA2D6200387344;
+			remoteInfo = CoreSearch;
+		};
+		C44CC3192EAA2D6200387344 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C4681DB22E7C2717004C20D3;
+			remoteInfo = Scrollback;
+		};
+		C4681DC22E7C2718004C20D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C4681DB22E7C2717004C20D3;
+			remoteInfo = Scrollback;
+		};
+		C4681DCC2E7C2718004C20D3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C4681DB22E7C2717004C20D3;
+			remoteInfo = Scrollback;
+		};
+		C4C56C572EAB6B910073342F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C44CC30A2EAA2D6200387344;
+			remoteInfo = CoreSearch;
+		};
+		C4C56C652EAB6E540073342F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C4681DAB2E7C2717004C20D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C4C56C2C2EAB6AE50073342F;
+			remoteInfo = "scrollback-mcp";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C44CC3252EAA2D6200387344 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C44CC3212EAA2D6200387344 /* CoreSearch.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C44CC3422EAA2E9300387344 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Helpers;
+			dstSubfolderSpec = 1;
+			files = (
+				C4C56C642EAB6D4C0073342F /* scrollback-mcp.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4C56C592EAB6B910073342F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C4C56C562EAB6B910073342F /* CoreSearch.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C44CC30B2EAA2D6200387344 /* CoreSearch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreSearch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C44CC3152EAA2D6200387344 /* CoreSearchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreSearchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4681DB32E7C2717004C20D3 /* Scrollback.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scrollback.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4681DC12E7C2718004C20D3 /* ScrollbackTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollbackTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4681DCB2E7C2718004C20D3 /* ScrollbackUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollbackUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4C56C2D2EAB6AE50073342F /* scrollback-mcp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "scrollback-mcp.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C44CC32B2EAA2DE100387344 /* Exceptions for "ScrollbackDev" folder in "CoreSearch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AI/EmbeddingService.swift,
+				AI/MobileCLIP/MobileCLIPEmbeddingProvider.swift,
+				AI/MobileCLIP/MobileCLIPManifest.swift,
+				AI/MobileCLIP/MobileCLIPModelCatalog.swift,
+				AI/MobileCLIP/MobileCLIPModelStore.swift,
+				AI/MobileCLIP/MobileCLIPRuntime.swift,
+				AI/MobileCLIP/MobileCLIPTokenizer.swift,
+				CoreSearch/PreferencesService.swift,
+				CoreSearch/SearchFacade.swift,
+				OCR/OCRService.swift,
+				Search/OCRConfusion.swift,
+				Search/EmbeddingANNIndex.swift,
+				Search/EmbeddingANNIndexStore.swift,
+				Search/SearchQueryParser.swift,
+				Search/SearchService.swift,
+				Search/VectorSearchEngine.swift,
+				Security/FileCrypter.swift,
+				Security/KeyStore.swift,
+				Security/SQLCipherBridge.swift,
+				Settings/SettingsStore.swift,
+				"Storage/DB+Embeddings.swift",
+				"Storage/DB+LatestQueries.swift",
+				"Storage/DB+OCRBoxQueries.swift",
+				"Storage/DB+SearchQueries.swift",
+				"Storage/DB+SnapshotMaintenance.swift",
+				"Storage/DB+SnapshotReads.swift",
+				"Storage/DB+SnapshotStats.swift",
+				"Storage/DB+SnapshotWrites.swift",
+				"Storage/DB+TextQueries.swift",
+				"Storage/DB+UsageSessions.swift",
+				Storage/DB.swift,
+				Storage/HEVCFrameExtractor.swift,
+				Storage/ImageEncoder.swift,
+				"Storage/StoragePaths+Backup.swift",
+				"Storage/StoragePaths+Migration.swift",
+				"Storage/StoragePaths+SecurityScope.swift",
+				"Storage/StoragePaths+SharedState.swift",
+				Storage/StoragePaths.swift,
+				Timeline/ThumbnailCache.swift,
+			);
+			target = C44CC30A2EAA2D6200387344 /* CoreSearch */;
+		};
+		C4C56C5F2EAB6BB70073342F /* Exceptions for "ScrollbackDev" folder in "scrollback-mcp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				MCP/AnyCodable.swift,
+				MCP/JSONRPC.swift,
+				MCP/MCPMain.swift,
+				MCP/MCPServer.swift,
+				MCP/Schemas.swift,
+			);
+			target = C4C56C2C2EAB6AE50073342F /* scrollback-mcp */;
+		};
+		C4C56C632EAB6CE10073342F /* Exceptions for "scrollback-mcp" folder in "scrollback-mcp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C4C56C2C2EAB6AE50073342F /* scrollback-mcp */;
+		};
+		C4F1215E2E7EF53000AB38FC /* Exceptions for "ScrollbackDev" folder in "Scrollback" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				MCP/AnyCodable.swift,
+				MCP/JSONRPC.swift,
+				MCP/MCPMain.swift,
+				MCP/MCPServer.swift,
+				MCP/Schemas.swift,
+			);
+			target = C4681DB22E7C2717004C20D3 /* Scrollback */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C44CC30C2EAA2D6200387344 /* CoreSearch */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CoreSearch;
+			sourceTree = "<group>";
+		};
+		C44CC31B2EAA2D6200387344 /* CoreSearchTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CoreSearchTests;
+			sourceTree = "<group>";
+		};
+		C4681DB52E7C2717004C20D3 /* ScrollbackDev */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C4F1215E2E7EF53000AB38FC /* Exceptions for "ScrollbackDev" folder in "Scrollback" target */,
+				C44CC32B2EAA2DE100387344 /* Exceptions for "ScrollbackDev" folder in "CoreSearch" target */,
+				C4C56C5F2EAB6BB70073342F /* Exceptions for "ScrollbackDev" folder in "scrollback-mcp" target */,
+			);
+			path = ScrollbackDev;
+			sourceTree = "<group>";
+		};
+		C4681DC42E7C2718004C20D3 /* ScrollbackDevTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ScrollbackDevTests;
+			sourceTree = "<group>";
+		};
+		C4681DCE2E7C2718004C20D3 /* ScrollbackDevUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ScrollbackDevUITests;
+			sourceTree = "<group>";
+		};
+		C4C56C2E2EAB6AE50073342F /* scrollback-mcp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C4C56C632EAB6CE10073342F /* Exceptions for "scrollback-mcp" folder in "scrollback-mcp" target */,
+			);
+			path = "scrollback-mcp";
+			sourceTree = "<group>";
+		};
+		C4C56C3D2EAB6AE70073342F /* scrollback-mcp-agentTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "scrollback-mcp-agentTests";
+			sourceTree = "<group>";
+		};
+		C4C56C472EAB6AE70073342F /* scrollback-mcp-agentUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "scrollback-mcp-agentUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C44CC3082EAA2D6200387344 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C44CC3482EAA331000387344 /* SQLCipher in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C44CC3122EAA2D6200387344 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C44CC3162EAA2D6200387344 /* CoreSearch.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DB02E7C2717004C20D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C45777802E93EFE9007E2F3D /* Collections in Frameworks */,
+				C4B151FF2E8FDB30003BBD66 /* SQLCipher in Frameworks */,
+				C4F1215A2E7EEDDC00AB38FC /* Sparkle in Frameworks */,
+				C44CC3202EAA2D6200387344 /* CoreSearch.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DBE2E7C2718004C20D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DC82E7C2718004C20D3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4C56C2A2EAB6AE50073342F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C43960542ED30B9600B5EC03 /* SQLCipher in Frameworks */,
+				C4C56C552EAB6B910073342F /* CoreSearch.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C457777D2E93EFCE007E2F3D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C4681DAA2E7C2717004C20D3 = {
+			isa = PBXGroup;
+			children = (
+				C4681DB52E7C2717004C20D3 /* ScrollbackDev */,
+				C4681DC42E7C2718004C20D3 /* ScrollbackDevTests */,
+				C4681DCE2E7C2718004C20D3 /* ScrollbackDevUITests */,
+				C44CC30C2EAA2D6200387344 /* CoreSearch */,
+				C44CC31B2EAA2D6200387344 /* CoreSearchTests */,
+				C4C56C2E2EAB6AE50073342F /* scrollback-mcp */,
+				C4C56C3D2EAB6AE70073342F /* scrollback-mcp-agentTests */,
+				C4C56C472EAB6AE70073342F /* scrollback-mcp-agentUITests */,
+				C457777D2E93EFCE007E2F3D /* Frameworks */,
+				C4681DB42E7C2717004C20D3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C4681DB42E7C2717004C20D3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C4681DB32E7C2717004C20D3 /* Scrollback.app */,
+				C4681DC12E7C2718004C20D3 /* ScrollbackTests.xctest */,
+				C4681DCB2E7C2718004C20D3 /* ScrollbackUITests.xctest */,
+				C44CC30B2EAA2D6200387344 /* CoreSearch.framework */,
+				C44CC3152EAA2D6200387344 /* CoreSearchTests.xctest */,
+				C4C56C2D2EAB6AE50073342F /* scrollback-mcp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C44CC3062EAA2D6200387344 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C44CC30A2EAA2D6200387344 /* CoreSearch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C44CC3222EAA2D6200387344 /* Build configuration list for PBXNativeTarget "CoreSearch" */;
+			buildPhases = (
+				C44CC3062EAA2D6200387344 /* Headers */,
+				C44CC3072EAA2D6200387344 /* Sources */,
+				C44CC3082EAA2D6200387344 /* Frameworks */,
+				C44CC3092EAA2D6200387344 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C44CC30C2EAA2D6200387344 /* CoreSearch */,
+			);
+			name = CoreSearch;
+			packageProductDependencies = (
+				C44CC3472EAA331000387344 /* SQLCipher */,
+			);
+			productName = CoreSearch;
+			productReference = C44CC30B2EAA2D6200387344 /* CoreSearch.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		C44CC3142EAA2D6200387344 /* CoreSearchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C44CC3262EAA2D6200387344 /* Build configuration list for PBXNativeTarget "CoreSearchTests" */;
+			buildPhases = (
+				C44CC3112EAA2D6200387344 /* Sources */,
+				C44CC3122EAA2D6200387344 /* Frameworks */,
+				C44CC3132EAA2D6200387344 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C44CC3182EAA2D6200387344 /* PBXTargetDependency */,
+				C44CC31A2EAA2D6200387344 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C44CC31B2EAA2D6200387344 /* CoreSearchTests */,
+			);
+			name = CoreSearchTests;
+			packageProductDependencies = (
+			);
+			productName = CoreSearchTests;
+			productReference = C44CC3152EAA2D6200387344 /* CoreSearchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C4681DB22E7C2717004C20D3 /* Scrollback */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4681DD52E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "Scrollback" */;
+			buildPhases = (
+				C4681DAF2E7C2717004C20D3 /* Sources */,
+				C4681DB02E7C2717004C20D3 /* Frameworks */,
+				C4681DB12E7C2717004C20D3 /* Resources */,
+				C44CC3252EAA2D6200387344 /* Embed Frameworks */,
+				C44CC3422EAA2E9300387344 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4C56C662EAB6E540073342F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4681DB52E7C2717004C20D3 /* ScrollbackDev */,
+			);
+			name = Scrollback;
+			packageProductDependencies = (
+				C4F121592E7EEDDC00AB38FC /* Sparkle */,
+				C4B151FE2E8FDB30003BBD66 /* SQLCipher */,
+				C457777F2E93EFE9007E2F3D /* Collections */,
+			);
+			productName = Scrollback;
+			productReference = C4681DB32E7C2717004C20D3 /* Scrollback.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C4681DC02E7C2718004C20D3 /* ScrollbackTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4681DD82E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "ScrollbackTests" */;
+			buildPhases = (
+				C4681DBD2E7C2718004C20D3 /* Sources */,
+				C4681DBE2E7C2718004C20D3 /* Frameworks */,
+				C4681DBF2E7C2718004C20D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4681DC32E7C2718004C20D3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4681DC42E7C2718004C20D3 /* ScrollbackDevTests */,
+			);
+			name = ScrollbackTests;
+			packageProductDependencies = (
+			);
+			productName = ScrollbackTests;
+			productReference = C4681DC12E7C2718004C20D3 /* ScrollbackTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C4681DCA2E7C2718004C20D3 /* ScrollbackUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4681DDB2E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "ScrollbackUITests" */;
+			buildPhases = (
+				C4681DC72E7C2718004C20D3 /* Sources */,
+				C4681DC82E7C2718004C20D3 /* Frameworks */,
+				C4681DC92E7C2718004C20D3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4681DCD2E7C2718004C20D3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4681DCE2E7C2718004C20D3 /* ScrollbackDevUITests */,
+			);
+			name = ScrollbackUITests;
+			packageProductDependencies = (
+			);
+			productName = ScrollbackUITests;
+			productReference = C4681DCB2E7C2718004C20D3 /* ScrollbackUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		C4C56C2C2EAB6AE50073342F /* scrollback-mcp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4C56C4C2EAB6AE70073342F /* Build configuration list for PBXNativeTarget "scrollback-mcp" */;
+			buildPhases = (
+				C4C56C292EAB6AE50073342F /* Sources */,
+				C4C56C2A2EAB6AE50073342F /* Frameworks */,
+				C4C56C2B2EAB6AE50073342F /* Resources */,
+				C4C56C592EAB6B910073342F /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4C56C582EAB6B910073342F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C4C56C2E2EAB6AE50073342F /* scrollback-mcp */,
+			);
+			name = "scrollback-mcp";
+			packageProductDependencies = (
+				C43960532ED30B9600B5EC03 /* SQLCipher */,
+			);
+			productName = "scrollback-mcp-agent";
+			productReference = C4C56C2D2EAB6AE50073342F /* scrollback-mcp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C4681DAB2E7C2717004C20D3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					C44CC30A2EAA2D6200387344 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					C44CC3142EAA2D6200387344 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = C4681DB22E7C2717004C20D3;
+					};
+					C4681DB22E7C2717004C20D3 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					C4681DC02E7C2718004C20D3 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = C4681DB22E7C2717004C20D3;
+					};
+					C4681DCA2E7C2718004C20D3 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = C4681DB22E7C2717004C20D3;
+					};
+					C4C56C2C2EAB6AE50073342F = {
+						CreatedOnToolsVersion = 16.4;
+					};
+				};
+			};
+			buildConfigurationList = C4681DAE2E7C2717004C20D3 /* Build configuration list for PBXProject "Scrollback" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C4681DAA2E7C2717004C20D3;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C4F121582E7EEDDC00AB38FC /* XCRemoteSwiftPackageReference "Sparkle" */,
+				C4B151FD2E8FDB30003BBD66 /* XCRemoteSwiftPackageReference "SQLCipher.swift" */,
+				C457777E2E93EFE9007E2F3D /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C4681DB42E7C2717004C20D3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C4681DB22E7C2717004C20D3 /* Scrollback */,
+				C44CC30A2EAA2D6200387344 /* CoreSearch */,
+				C4681DC02E7C2718004C20D3 /* ScrollbackTests */,
+				C4681DCA2E7C2718004C20D3 /* ScrollbackUITests */,
+				C44CC3142EAA2D6200387344 /* CoreSearchTests */,
+				C4C56C2C2EAB6AE50073342F /* scrollback-mcp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C44CC3092EAA2D6200387344 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C44CC3132EAA2D6200387344 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DB12E7C2717004C20D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DBF2E7C2718004C20D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DC92E7C2718004C20D3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4C56C2B2EAB6AE50073342F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C44CC3072EAA2D6200387344 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C44CC3112EAA2D6200387344 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DAF2E7C2717004C20D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DBD2E7C2718004C20D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4681DC72E7C2718004C20D3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4C56C292EAB6AE50073342F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C44CC3182EAA2D6200387344 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C44CC30A2EAA2D6200387344 /* CoreSearch */;
+			targetProxy = C44CC3172EAA2D6200387344 /* PBXContainerItemProxy */;
+		};
+		C44CC31A2EAA2D6200387344 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C4681DB22E7C2717004C20D3 /* Scrollback */;
+			targetProxy = C44CC3192EAA2D6200387344 /* PBXContainerItemProxy */;
+		};
+		C4681DC32E7C2718004C20D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C4681DB22E7C2717004C20D3 /* Scrollback */;
+			targetProxy = C4681DC22E7C2718004C20D3 /* PBXContainerItemProxy */;
+		};
+		C4681DCD2E7C2718004C20D3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C4681DB22E7C2717004C20D3 /* Scrollback */;
+			targetProxy = C4681DCC2E7C2718004C20D3 /* PBXContainerItemProxy */;
+		};
+		C4C56C582EAB6B910073342F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C44CC30A2EAA2D6200387344 /* CoreSearch */;
+			targetProxy = C4C56C572EAB6B910073342F /* PBXContainerItemProxy */;
+		};
+		C4C56C662EAB6E540073342F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C4C56C2C2EAB6AE50073342F /* scrollback-mcp */;
+			targetProxy = C4C56C652EAB6E540073342F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C44CC3232EAA2D6200387344 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.coresearch;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		C44CC3242EAA2D6200387344 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.coresearch;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		C44CC3272EAA2D6200387344 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.coresearch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scrollback.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scrollback";
+			};
+			name = Debug;
+		};
+		C44CC3282EAA2D6200387344 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.coresearch.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scrollback.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scrollback";
+			};
+			name = Release;
+		};
+		C4681DD32E7C2718004C20D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C4681DD42E7C2718004C20D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C4681DD62E7C2718004C20D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+					CODE_SIGN_ENTITLEMENTS = "";
+					CODE_SIGN_IDENTITY = "-";
+					CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_ASSET_PATHS = "";
+					DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScrollbackDev/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Scrollback;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_SUAllowsAutomaticUpdates = YES;
+				INFOPLIST_KEY_SUAutomaticallyUpdate = YES;
+				INFOPLIST_KEY_SUEnableAutomaticChecks = YES;
+				INFOPLIST_KEY_SUFeedURL = "https://raw.githubusercontent.com/parrot-cycles/Scrollback/main/appcast.xml";
+				INFOPLIST_KEY_SUPublicEDKey = PASTE_YOUR_SPARKLE_PUBLIC_ED25519_KEY_HERE;
+				INFOPLIST_KEY_SUScheduledCheckInterval = 86400;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback;
+				PRODUCT_NAME = Scrollback;
+					PROVISIONING_PROFILE_SPECIFIER = "";
+					REGISTER_APP_GROUPS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C4681DD72E7C2718004C20D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+					CODE_SIGN_ENTITLEMENTS = "";
+					CODE_SIGN_IDENTITY = "-";
+					CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_ASSET_PATHS = "";
+					DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScrollbackDev/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Scrollback;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_SUAllowsAutomaticUpdates = YES;
+				INFOPLIST_KEY_SUAutomaticallyUpdate = YES;
+				INFOPLIST_KEY_SUEnableAutomaticChecks = YES;
+				INFOPLIST_KEY_SUFeedURL = "https://raw.githubusercontent.com/parrot-cycles/Scrollback/main/appcast.xml";
+				INFOPLIST_KEY_SUPublicEDKey = PASTE_YOUR_SPARKLE_PUBLIC_ED25519_KEY_HERE;
+				INFOPLIST_KEY_SUScheduledCheckInterval = 86400;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback;
+				PRODUCT_NAME = Scrollback;
+					PROVISIONING_PROFILE_SPECIFIER = "";
+					REGISTER_APP_GROUPS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C4681DD92E7C2718004C20D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scrollback.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scrollback";
+			};
+			name = Debug;
+		};
+		C4681DDA2E7C2718004C20D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Scrollback.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Scrollback";
+			};
+			name = Release;
+		};
+		C4681DDC2E7C2718004C20D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Scrollback;
+			};
+			name = Debug;
+		};
+		C4681DDD2E7C2718004C20D3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 46;
+				DEVELOPMENT_TEAM = AHMJRF4WSG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Scrollback;
+			};
+			name = Release;
+		};
+		C4C56C4D2EAB6AE70073342F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_ENTITLEMENTS = "";
+					CODE_SIGN_IDENTITY = "-";
+					CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+					DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "scrollback-mcp/Info.plist";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.mcp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+					PROVISIONING_PROFILE_SPECIFIER = "";
+					REGISTER_APP_GROUPS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C4C56C4E2EAB6AE70073342F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+					CODE_SIGN_ENTITLEMENTS = "";
+					CODE_SIGN_IDENTITY = "-";
+					CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 46;
+					DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "scrollback-mcp/Info.plist";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 2.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.parrotcycles.scrollback.mcp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+					PROVISIONING_PROFILE_SPECIFIER = "";
+					REGISTER_APP_GROUPS = NO;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C44CC3222EAA2D6200387344 /* Build configuration list for PBXNativeTarget "CoreSearch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C44CC3232EAA2D6200387344 /* Debug */,
+				C44CC3242EAA2D6200387344 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C44CC3262EAA2D6200387344 /* Build configuration list for PBXNativeTarget "CoreSearchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C44CC3272EAA2D6200387344 /* Debug */,
+				C44CC3282EAA2D6200387344 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4681DAE2E7C2717004C20D3 /* Build configuration list for PBXProject "Scrollback" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4681DD32E7C2718004C20D3 /* Debug */,
+				C4681DD42E7C2718004C20D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4681DD52E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "Scrollback" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4681DD62E7C2718004C20D3 /* Debug */,
+				C4681DD72E7C2718004C20D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4681DD82E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "ScrollbackTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4681DD92E7C2718004C20D3 /* Debug */,
+				C4681DDA2E7C2718004C20D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4681DDB2E7C2718004C20D3 /* Build configuration list for PBXNativeTarget "ScrollbackUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4681DDC2E7C2718004C20D3 /* Debug */,
+				C4681DDD2E7C2718004C20D3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C4C56C4C2EAB6AE70073342F /* Build configuration list for PBXNativeTarget "scrollback-mcp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4C56C4D2EAB6AE70073342F /* Debug */,
+				C4C56C4E2EAB6AE70073342F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C457777E2E93EFE9007E2F3D /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+		C4B151FD2E8FDB30003BBD66 /* XCRemoteSwiftPackageReference "SQLCipher.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sqlcipher/SQLCipher.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.10.0;
+			};
+		};
+		C4F121582E7EEDDC00AB38FC /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C43960532ED30B9600B5EC03 /* SQLCipher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4B151FD2E8FDB30003BBD66 /* XCRemoteSwiftPackageReference "SQLCipher.swift" */;
+			productName = SQLCipher;
+		};
+		C44CC3472EAA331000387344 /* SQLCipher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4B151FD2E8FDB30003BBD66 /* XCRemoteSwiftPackageReference "SQLCipher.swift" */;
+			productName = SQLCipher;
+		};
+		C457777F2E93EFE9007E2F3D /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C457777E2E93EFE9007E2F3D /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		C4B151FE2E8FDB30003BBD66 /* SQLCipher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4B151FD2E8FDB30003BBD66 /* XCRemoteSwiftPackageReference "SQLCipher.swift" */;
+			productName = SQLCipher;
+		};
+		C4F121592E7EEDDC00AB38FC /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C4F121582E7EEDDC00AB38FC /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = C4681DAB2E7C2717004C20D3 /* Project object */;
+}
