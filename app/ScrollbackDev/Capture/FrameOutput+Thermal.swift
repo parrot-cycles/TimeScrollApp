@@ -15,11 +15,9 @@ extension FrameOutput {
             break
         case .serious:
             currentInterval = min(maxInterval, max(currentInterval, baseInterval) * 2)
-            Indexer.shared.setOCRCooldown(seconds: 30)
             suppressPostersUntil = now + 30
         case .critical:
             currentInterval = min(maxInterval, max(currentInterval, baseInterval) * 3)
-            Indexer.shared.setOCRCooldown(seconds: 60)
             suppressPostersUntil = now + 60
         @unknown default:
             break

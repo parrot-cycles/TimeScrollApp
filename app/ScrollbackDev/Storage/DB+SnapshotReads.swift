@@ -197,6 +197,29 @@ extension DB {
         }
     }
 
+    /// Returns snapshots that have not yet been OCR'd (no stored text and no text reference).
+    /// Oldest-first so background worker prioritizes older content for search indexing.
+    func snapshotsPendingOCR(limit: Int = 20) throws -> [EmbeddingRebuildRow] {
+        try onQueueSync {
+            try openIfNeeded()
+            guard let db = db else { return [] }
+            var stmt: OpaquePointer?
+            defer { sqlite3_finalize(stmt) }
+            let sql = "SELECT id, started_at_ms, path, thumb_path FROM ts_snapshot WHERE text_store_id IS NULL AND text_ref_id IS NULL ORDER BY started_at_ms ASC LIMIT ?;"
+            guard sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK else { return [] }
+            sqlite3_bind_int(stmt, 1, Int32(limit))
+            var rows: [EmbeddingRebuildRow] = []
+            while sqlite3_step(stmt) == SQLITE_ROW {
+                let id = sqlite3_column_int64(stmt, 0)
+                let startedAtMs = sqlite3_column_int64(stmt, 1)
+                let path = String(cString: sqlite3_column_text(stmt, 2))
+                let thumbPath = sqlite3_column_text(stmt, 3).map { String(cString: $0) }
+                rows.append(EmbeddingRebuildRow(id: id, startedAtMs: startedAtMs, path: path, thumbPath: thumbPath))
+            }
+            return rows
+        }
+    }
+
     func listSnapshotsForEmbeddingRebuild() throws -> [EmbeddingRebuildRow] {
         try onQueueSync {
             try openIfNeeded()

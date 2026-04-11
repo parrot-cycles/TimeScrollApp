@@ -6,6 +6,7 @@ final class StorageMaintenanceManager {
     private let workQueue = DispatchQueue(label: "Scrollback.StorageMaintenance", qos: .utility)
     private let stateQueue = DispatchQueue(label: "Scrollback.StorageMaintenance.State")
     private var timer: Timer?
+    private var ocrTimer: Timer?
     private var running = false
 
     private init() {}
@@ -19,6 +20,13 @@ final class StorageMaintenanceManager {
         scheduled.tolerance = 5 * 60
         timer = scheduled
 
+        // Background OCR backfill: process un-OCR'd snapshots every 2 minutes
+        let ocrScheduled = Timer.scheduledTimer(withTimeInterval: 120, repeats: true) { _ in
+            BackgroundOCRWorker.shared.processNextBatch()
+        }
+        ocrScheduled.tolerance = 30
+        ocrTimer = ocrScheduled
+
         Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(90))
             self?.runIfNeeded()
@@ -28,6 +36,8 @@ final class StorageMaintenanceManager {
     func stop() {
         timer?.invalidate()
         timer = nil
+        ocrTimer?.invalidate()
+        ocrTimer = nil
     }
 
     func runIfNeeded(forceMaintenance: Bool = false, afterLargeDelete: Bool = false) {
@@ -67,6 +77,9 @@ final class StorageMaintenanceManager {
 
         DB.shared.pruneOldOCRBoxesIfConfigured()
         DB.shared.runAutomaticMaintenance(force: forceMaintenance, afterLargeDelete: afterLargeDelete)
+
+        // Process any un-OCR'd snapshots during maintenance
+        BackgroundOCRWorker.shared.processNextBatch()
     }
 }
 

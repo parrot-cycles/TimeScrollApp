@@ -198,7 +198,15 @@ final class FrameOutput: NSObject, SCStreamOutput {
                     self.lastPersistedPTS = pts
                     self.reportProbeIntervalIfNeeded()
 
-                    self.processText(snapshotId: rowId, retainedPixelBuffer: retainedPixelBuffer)
+                    // Accessibility text must be captured inline (ephemeral AX tree state).
+                    // OCR and embeddings are deferred to BackgroundOCRWorker.
+                    let modeRaw = UserDefaults.standard.string(forKey: "settings.textProcessingMode") ?? SettingsStore.defaultTextProcessingMode.rawValue
+                    let mode = SettingsStore.TextProcessingMode(rawValue: modeRaw) ?? SettingsStore.defaultTextProcessingMode
+                    if mode == .accessibility {
+                        self.processText(snapshotId: rowId, retainedPixelBuffer: retainedPixelBuffer)
+                    } else {
+                        retainedPixelBuffer.release()
+                    }
                 }
             } catch {
                 retainedPixelBuffer.release()
